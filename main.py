@@ -111,4 +111,4 @@ def main(page: ft.Page):
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 8000))
-    ft.run(target=main, port=port, host="0.0.0.0")
+    ft.run(main, port=port, host="0.0.0.0")
