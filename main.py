@@ -51,15 +51,15 @@ def main(page: ft.Page):
         ]
 
         header = ft.Container(
-            bgcolor=ft.Colors.BLUE_900,
+            bgcolor=ft.colors.BLUE_900,
             padding=10,
             content=ft.Row([
-                ft.Text("Easy Sale - Punto de Venta", color=ft.Colors.WHITE, size=16, weight=ft.FontWeight.BOLD),
+                ft.Text("Easy Sale - Punto de Venta", color=ft.colors.WHITE, size=16, weight=ft.FontWeight.BOLD),
                 ft.Row([
-                    ft.Text(f"Usuario: {usuario_actual['nombre']} ({usuario_actual['rol']})", color=ft.Colors.WHITE),
+                    ft.Text(f"Usuario: {usuario_actual['nombre']} ({usuario_actual['rol']})", color=ft.colors.WHITE),
                     ft.IconButton(
                         icon=ft.Icons.LOGOUT,
-                        icon_color=ft.Colors.RED_400,
+                        icon_color=ft.colors.RED_400,
                         tooltip="Cerrar Sesión",
                         on_click=cerrar_sesion
                     )
