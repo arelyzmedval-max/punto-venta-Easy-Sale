@@ -9,7 +9,7 @@ from views.caja import CajaView
 from views.configuracion import ConfiguracionView
 from views.clientes import ClientesView
 from views.login import LoginView  # <-- Asegúrate de tener tu vista de login en views/
-from database import Database
+from database import database
 
 def main(page: ft.Page):
     page.title = "Easy Sale - Punto de Venta"
