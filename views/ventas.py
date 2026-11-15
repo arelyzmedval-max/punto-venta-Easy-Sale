@@ -21,7 +21,7 @@ class VentasView(ft.Container):
             on_submit=self.agregar_por_enter
         )
 
-       btn_buscar = ft.ElevatedButton(
+        btn_buscar = ft.ElevatedButton(
             content=ft.Text("Agregar"),
             icon=ft.Icons.ADD_SHOPPING_CART,
             bgcolor=ft.colors.BLUE_700,
@@ -80,7 +80,7 @@ class VentasView(ft.Container):
         self.lbl_impuesto = ft.Text("$0.00", size=16)
         self.lbl_total = ft.Text("$0.00", size=22, weight=ft.FontWeight.BOLD, color=ft.colors.GREEN_700)
 
-        btn_cobrar = ft.Button(
+        btn_cobrar = ft.ElevatedButton(
             content=ft.Text("Procesar Venta"),
             icon=ft.Icons.POINT_OF_SALE,
             bgcolor=ft.colors.GREEN_700,
@@ -293,7 +293,7 @@ class VentasView(ft.Container):
                 peso = float(txt_peso.value.replace(",", "."))
                 if peso <= 0: raise ValueError
             except ValueError:
-                self.mostrar_snack("⚠️ Ingresa un peso válido", ft.Colors.RED_700)
+                self.mostrar_snack("⚠️ Ingresa un peso válido", ft.colors.RED_700)
                 return
             if modal_container in self.page_ref.overlay: self.page_ref.overlay.remove(modal_container)
             self.page_ref.update()
