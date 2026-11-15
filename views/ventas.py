@@ -355,7 +355,7 @@ class VentasView(ft.Container):
                     ft.DataCell(ft.Text(cant_str)),
                     ft.DataCell(ft.Text(f"${item['precio']:.2f}")),
                     ft.DataCell(ft.Text(f"${subtotal_item:.2f}")),
-                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color=ft.Colors.RED_400, on_click=quitar_item))
+                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color=ft.colors.RED_400, on_click=quitar_item))
                 ])
             )
 
