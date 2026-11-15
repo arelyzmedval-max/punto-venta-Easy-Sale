@@ -31,16 +31,16 @@ class UsuariosView(ft.Container):
         btn_agregar = ft.Button(
             content=ft.Text("Agregar Usuario"),
             icon=ft.Icons.PERSON_ADD,
-            bgcolor=ft.Colors.BLUE_700,
-            color=ft.Colors.WHITE,
+            bgcolor=ft.colors.BLUE_700,
+            color=ft.colors.WHITE,
             on_click=self.agregar_usuario
         )
 
         btn_editar = ft.Button(
             content=ft.Text("Guardar Cambios"),
             icon=ft.Icons.SAVE,
-            bgcolor=ft.Colors.AMBER_700,
-            color=ft.Colors.WHITE,
+            bgcolor=ft.colors.AMBER_700,
+            color=ft.colors.WHITE,
             on_click=self.editar_usuario
         )
 
@@ -107,8 +107,8 @@ class UsuariosView(ft.Container):
                         ft.DataCell(ft.Text(u['rol'])),
                         ft.DataCell(
                             ft.Row([
-                                ft.IconButton(ft.Icons.EDIT, icon_color=ft.Colors.AMBER_700, on_click=cargar_u),
-                                ft.IconButton(ft.Icons.DELETE, icon_color=ft.Colors.RED_400, on_click=eliminar_u)
+                                ft.IconButton(ft.Icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_u),
+                                ft.IconButton(ft.Icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_u)
                             ])
                         )
                     ])
@@ -126,21 +126,21 @@ class UsuariosView(ft.Container):
         rol = self.dd_rol.value
 
         if not (nombre and usuario and password and rol):
-            self.mostrar_snack("⚠️ Todos los campos son obligatorios", ft.Colors.RED_700)
+            self.mostrar_snack("⚠️ Todos los campos son obligatorios", ft.colors.RED_700)
             return
 
         query = "INSERT INTO usuarios (nombre, usuario, password, rol) VALUES (%s, %s, %s, %s)"
         try:
             self.db.ejecutar_query(query, (nombre, usuario, password, rol))
-            self.mostrar_snack("✅ Usuario registrado exitosamente", ft.Colors.GREEN_700)
+            self.mostrar_snack("✅ Usuario registrado exitosamente", ft.colors.GREEN_700)
             self.limpiar_formulario()
             self.mostrar_usuarios()
         except Exception as ex:
-            self.mostrar_snack(f"❌ Error al registrar usuario: {ex}", ft.Colors.RED_700)
+            self.mostrar_snack(f"❌ Error al registrar usuario: {ex}", ft.colors.RED_700)
 
     def editar_usuario(self, e):
         if not self.id_usuario_seleccionado:
-            self.mostrar_snack("⚠️ Selecciona un usuario de la tabla para editar", ft.Colors.ORANGE_800)
+            self.mostrar_snack("⚠️ Selecciona un usuario de la tabla para editar", ft.colors.ORANGE_800)
             return
 
         nombre = self.txt_nombre.value.strip() if self.txt_nombre.value else ""
@@ -149,7 +149,7 @@ class UsuariosView(ft.Container):
         rol = self.dd_rol.value
 
         if not (nombre and usuario and rol):
-            self.mostrar_snack("⚠️ El nombre, usuario y rol son obligatorios", ft.Colors.RED_700)
+            self.mostrar_snack("⚠️ El nombre, usuario y rol son obligatorios", ft.colors.RED_700)
             return
 
         if password:
@@ -161,7 +161,7 @@ class UsuariosView(ft.Container):
 
         cursor = self.db.ejecutar_query(query, params)
         if cursor:
-            self.mostrar_snack("✅ Usuario actualizado exitosamente", ft.Colors.GREEN_700)
+            self.mostrar_snack("✅ Usuario actualizado exitosamente", ft.colors.GREEN_700)
             self.limpiar_formulario()
             self.mostrar_usuarios()
 
@@ -169,7 +169,7 @@ class UsuariosView(ft.Container):
         def confirmar(e):
             self.page_ref.close(dlg)
             self.db.ejecutar_query("DELETE FROM usuarios WHERE id_usuario = %s", (id_u,))
-            self.mostrar_snack("✅ Usuario eliminado", ft.Colors.GREEN_700)
+            self.mostrar_snack("✅ Usuario eliminado", ft.colors.GREEN_700)
             self.mostrar_usuarios()
 
         dlg = ft.AlertDialog(
@@ -177,7 +177,7 @@ class UsuariosView(ft.Container):
             content=ft.Text(f"¿Deseas eliminar el usuario con ID '{id_u}'?"),
             actions=[
                 ft.TextButton("Cancelar", on_click=lambda e: self.cerrar_dialogo(dlg)),
-                ft.Button(content=ft.Text("Eliminar"), bgcolor=ft.Colors.RED_700, color=ft.Colors.WHITE,
+                ft.Button(content=ft.Text("Eliminar"), bgcolor=ft.colors.RED_700, color=ft.colors.WHITE,
                           on_click=confirmar)
             ]
         )
@@ -202,7 +202,7 @@ class UsuariosView(ft.Container):
             self.page_ref.update()
 
     def mostrar_snack(self, texto, color):
-        snack = ft.SnackBar(content=ft.Text(texto, color=ft.Colors.WHITE), bgcolor=color, open=True)
+        snack = ft.SnackBar(content=ft.Text(texto, color=ft.colors.WHITE), bgcolor=color, open=True)
         self.page_ref.overlay.append(snack)
         self.page_ref.update()
 
