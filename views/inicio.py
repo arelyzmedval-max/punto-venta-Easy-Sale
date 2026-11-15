@@ -129,7 +129,7 @@ class InicioView(ft.Container):
                         ft.Icon(icono, color=color, size=24),
                         ft.Text(titulo, color=ft.colors.GREY_700, size=13, weight=ft.FontWeight.BOLD)
                     ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                    ft.Divider(height=5, color=ft.Colors.TRANSPARENT),
+                    ft.Divider(height=5, color=ft.colors.TRANSPARENT),
                     ft.Text(valor, size=22, weight=ft.FontWeight.BOLD, color=color)
                 ], spacing=5)
             )
