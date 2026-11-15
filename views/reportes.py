@@ -71,14 +71,14 @@ class ReportesView(ft.Container):
             self.tabla_reporte.rows.append(
                 ft.DataRow(
                     cells=[
-                        ft.DataCell(ft.Text("TOTAL GENERAL", weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_700)),
+                        ft.DataCell(ft.Text("TOTAL GENERAL", weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_700)),
                         ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text(f"${total_acumulado:.2f}", weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_700)),
+                        ft.DataCell(ft.Text(f"${total_acumulado:.2f}", weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_700)),
                         ft.DataCell(ft.Text("")),
                     ]
                 )
             )
         else:
-            self.page_ref.update(ft.SnackBar(ft.Text("No hay registros para generar reporte"), bgcolor=ft.Colors.ORANGE_800))
+            self.page_ref.update(ft.SnackBar(ft.Text("No hay registros para generar reporte"), bgcolor=ft.colors.ORANGE_800))
 
         self.page.update()
