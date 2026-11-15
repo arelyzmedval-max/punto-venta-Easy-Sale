@@ -11,8 +11,8 @@ class ReportesView(ft.Container):
         btn_generar = ft.Button(
             content=ft.Text("Generar Reporte"),
             icon=ft.Icons.ANALYTICS,
-            bgcolor=ft.Colors.GREEN_700,
-            color=ft.Colors.WHITE,
+            bgcolor=ft.colors.GREEN_700,
+            color=ft.colors.WHITE,
             on_click=lambda e: self.generar_reporte()
         )
 
