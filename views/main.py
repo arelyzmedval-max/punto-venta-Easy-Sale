@@ -48,7 +48,7 @@ def main(page: ft.Page):
         ]
 
         header = ft.Container(
-            bgcolor=ft.Colors.BLUE_900,
+            bgcolor=ft.colors.BLUE_900,
             padding=10,
             content=ft.Row([
                 ft.Text("Easy Sale - Punto de Venta", color=ft.colors.WHITE, size=16, weight=ft.FontWeight.BOLD),
