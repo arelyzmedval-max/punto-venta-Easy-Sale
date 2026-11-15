@@ -34,7 +34,7 @@ class LoginView(ft.Container):
         # Estructura centrada del login
         self.content = ft.Container(
             expand=True,
-            bgcolor=ft.Colors.GREY_100,
+            bgcolor=ft.colors.GREY_100,
             content=ft.Row(
                 [
                     ft.Column(
