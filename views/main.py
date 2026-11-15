@@ -8,19 +8,16 @@ from views.usuarios import UsuariosView
 from views.caja import CajaView
 from views.configuracion import ConfiguracionView
 from views.clientes import ClientesView
-from views.login import LoginView  # <-- Asegúrate de tener tu vista de login en views/
+from views.login import LoginView
 from database import Database
 
 def main(page: ft.Page):
     page.title = "Easy Sale - Punto de Venta"
-  page.window.width = 1200
-page.window.height = 800
     page.padding = 0
 
     db = Database()
 
     # Función que se ejecuta cuando el login es exitoso
-   # Función que se ejecuta cuando el login es exitoso
     def mostrar_dashboard(usuario_actual):
         page.clean()
 
@@ -102,10 +99,10 @@ page.window.height = 800
 
         page.add(main_layout)
         page.update()
+
     # Función para mostrar la pantalla de inicio de sesión
     def mostrar_login():
         page.clean()
-        # Le pasamos la función mostrar_dashboard para que se ejecute al autenticarse bien
         login_view = LoginView(page, db, al_ingresar=mostrar_dashboard)
         page.add(login_view)
         page.update()
@@ -116,4 +113,4 @@ page.window.height = 800
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 8000))
-    ft.app(target=main, view=None, port=port, host="0.0.0.0")
+    ft.app(target=main, port=port, host="0.0.0.0")
