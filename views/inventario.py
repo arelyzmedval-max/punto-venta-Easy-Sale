@@ -37,16 +37,16 @@ class InventarioView(ft.Container):
         btn_agregar = ft.Button(
             content=ft.Text("Agregar Producto"),
             icon=ft.Icons.ADD,
-            bgcolor=ft.Colors.BLUE_700,
-            color=ft.Colors.WHITE,
+            bgcolor=ft.colors.BLUE_700,
+            color=ft.colors.WHITE,
             on_click=self.agregar_producto
         )
 
         btn_editar = ft.Button(
             content=ft.Text("Guardar Cambios"),
             icon=ft.Icons.SAVE,
-            bgcolor=ft.Colors.AMBER_700,
-            color=ft.Colors.WHITE,
+            bgcolor=ft.colors.AMBER_700,
+            color=ft.colors.WHITE,
             on_click=self.editar_producto
         )
 
@@ -109,7 +109,7 @@ class InventarioView(ft.Container):
 
                 stock_val = float(p['stock'])
                 stock_str = f"{stock_val:.3f} kg" if p.get('tipo_venta') == 'por kilo' else str(int(stock_val) if stock_val.is_integer() else stock_val)
-                color_stock = ft.Colors.RED_700 if stock_val <= 0 else ft.Colors.BLACK
+                color_stock = ft.colors.RED_700 if stock_val <= 0 else ft.colors.BLACK
 
                 self.tabla_inventario.rows.append(
                     ft.DataRow(cells=[
@@ -121,8 +121,8 @@ class InventarioView(ft.Container):
                         ft.DataCell(ft.Text(p['tipo_venta'])),
                         ft.DataCell(
                             ft.Row([
-                                ft.IconButton(ft.Icons.EDIT, icon_color=ft.Colors.AMBER_700, on_click=cargar_p),
-                                ft.IconButton(ft.Icons.DELETE, icon_color=ft.Colors.RED_400, on_click=eliminar_p)
+                                ft.IconButton(ft.Icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_p),
+                                ft.IconButton(ft.Icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_p)
                             ])
                         )
                     ])
@@ -153,7 +153,7 @@ class InventarioView(ft.Container):
             codigo = self.obtener_siguiente_codigo_autogenerado()
 
         if not (nombre and precio and stock and tipo_venta):
-            self.mostrar_snack("⚠️ Nombre, precio y stock son obligatorios", ft.Colors.RED_700)
+            self.mostrar_snack("⚠️ Nombre, precio y stock son obligatorios", ft.colors.RED_700)
             return
 
         try:
@@ -162,17 +162,17 @@ class InventarioView(ft.Container):
             if precio_val < 0 or stock_val < 0:
                 raise ValueError
         except ValueError:
-            self.mostrar_snack("⚠️ Precio y stock deben ser números positivos", ft.Colors.RED_700)
+            self.mostrar_snack("⚠️ Precio y stock deben ser números positivos", ft.colors.RED_700)
             return
 
         query = "INSERT INTO productos (codigo, nombre, descripcion, precio, stock, tipo_venta) VALUES (%s, %s, %s, %s, %s, %s)"
         try:
             self.db.ejecutar_query(query, (codigo, nombre, descripcion, precio_val, stock_val, tipo_venta))
-            self.mostrar_snack(f"✅ Producto agregado con código: {codigo}", ft.Colors.GREEN_700)
+            self.mostrar_snack(f"✅ Producto agregado con código: {codigo}", ft.colors.GREEN_700)
             self.limpiar_formulario()
             self.cargar_datos_tabla()
         except Exception as ex:
-            self.mostrar_snack(f"❌ Error al agregar producto: {ex}", ft.Colors.RED_700)
+            self.mostrar_snack(f"❌ Error al agregar producto: {ex}", ft.colors.RED_700)
 
     def editar_producto(self, e):
         if not self.codigo_seleccionado:
@@ -192,7 +192,7 @@ class InventarioView(ft.Container):
             if precio_val < 0 or stock_val < 0:
                 raise ValueError
         except ValueError:
-            self.mostrar_snack("⚠️ Precio y stock deben ser números positivos", ft.Colors.RED_700)
+            self.mostrar_snack("⚠️ Precio y stock deben ser números positivos", ft.colors.RED_700)
             return
 
         query = """
@@ -204,7 +204,7 @@ class InventarioView(ft.Container):
             codigo, nombre, descripcion, precio_val, stock_val, tipo_venta, self.codigo_seleccionado
         ))
         if cursor is not None:
-            self.mostrar_snack("✅ Producto actualizado exitosamente", ft.Colors.GREEN_700)
+            self.mostrar_snack("✅ Producto actualizado exitosamente", ft.colors.GREEN_700)
             self.limpiar_formulario()
             self.cargar_datos_tabla()
 
@@ -213,7 +213,7 @@ class InventarioView(ft.Container):
             if dlg in self.page_ref.overlay:
                 self.page_ref.overlay.remove(dlg)
             self.db.ejecutar_query("DELETE FROM productos WHERE codigo = %s", (codigo,))
-            self.mostrar_snack("✅ Producto eliminado", ft.Colors.GREEN_700)
+            self.mostrar_snack("✅ Producto eliminado", ft.colors.GREEN_700)
             self.cargar_datos_tabla()
 
         def cancelar(e):
@@ -223,16 +223,16 @@ class InventarioView(ft.Container):
 
         # Modal seguro compatible con tu versión usando Stack overlay
         dlg = ft.Stack([
-            ft.Container(bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLACK), expand=True, on_click=cancelar),
+            ft.Container(bgcolor=ft.colors.with_opacity(0.5, ft.colors.BLACK), expand=True, on_click=cancelar),
             ft.Row([
                 ft.Container(
-                    bgcolor=ft.Colors.WHITE, padding=20, border_radius=10, width=380,
+                    bgcolor=ft.colors.WHITE, padding=20, border_radius=10, width=380,
                     content=ft.Column([
                         ft.Text("Confirmar Eliminación", size=16, weight=ft.FontWeight.BOLD),
                         ft.Text(f"¿Deseas eliminar el producto con código '{codigo}'?"),
                         ft.Row([
                             ft.TextButton("Cancelar", on_click=cancelar),
-                            ft.ElevatedButton("Eliminar", bgcolor=ft.Colors.RED_700, color=ft.Colors.WHITE, on_click=confirmar)
+                            ft.ElevatedButton("Eliminar", bgcolor=ft.colors.RED_700, color=ft.colors.WHITE, on_click=confirmar)
                         ], alignment=ft.MainAxisAlignment.END)
                     ], tight=True, spacing=15)
                 )
@@ -263,6 +263,6 @@ class InventarioView(ft.Container):
             self.page_ref.update()
 
     def mostrar_snack(self, texto, color):
-        snack = ft.SnackBar(content=ft.Text(texto, color=ft.Colors.WHITE), bgcolor=color, open=True)
+        snack = ft.SnackBar(content=ft.Text(texto, color=ft.colors.WHITE), bgcolor=color, open=True)
         self.page_ref.overlay.append(snack)
         self.page_ref.update()
