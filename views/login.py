@@ -9,7 +9,7 @@ class LoginView(ft.Container):
 
         self.txt_usuario = ft.TextField(label="Usuario", width=300)
         self.txt_password = ft.TextField(label="Contraseña", password=True, can_reveal_password=True, width=300)
-        self.lbl_error = ft.Text("", color=ft.Colors.RED_400, size=14)
+        self.lbl_error = ft.Text("", color=ft.colors.RED_400, size=14)
 
         def intentar_login(e):
             usuario = self.txt_usuario.value.strip() if self.txt_usuario.value else ""
@@ -41,15 +41,15 @@ class LoginView(ft.Container):
                         [
                             ft.Container(
                                 padding=30,
-                                bgcolor=ft.Colors.WHITE,
+                                bgcolor=ft.colors.WHITE,
                                 border_radius=10,
-                                shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.GREY_400),
+                                shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.colors.GREY_400),
                                 content=ft.Column([
                                     ft.Text("Iniciar Sesión - Easy Sale", size=24, weight=ft.FontWeight.BOLD),
                                     self.txt_usuario,
                                     self.txt_password,
                                     self.lbl_error,
-                                    ft.ElevatedButton("Ingresar", on_click=intentar_login, bgcolor=ft.Colors.BLUE_700, color=ft.Colors.WHITE, width=300)
+                                    ft.ElevatedButton("Ingresar", on_click=intentar_login, bgcolor=ft.colors.BLUE_700, color=ft.colors.WHITE, width=300)
                                 ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15, tight=True)
                             )
                         ],
