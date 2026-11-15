@@ -16,7 +16,7 @@ class InicioView(ft.Container):
             padding=30,
             content=ft.Column([
                 ft.Text(f"¡Bienvenido de nuevo, {usuario.get('nombre', 'Admin')}!", size=24, weight=ft.FontWeight.BOLD),
-                ft.Text("Aquí tienes el resumen y las alertas importantes de tu inventario.", color=ft.Colors.GREY_700,
+                ft.Text("Aquí tienes el resumen y las alertas importantes de tu inventario.", color=ft.colors.GREY_700,
                         size=14),
                 ft.Divider(height=20),
 
@@ -25,9 +25,9 @@ class InicioView(ft.Container):
 
                 ft.Divider(height=10),
                 ft.Text("⚠️ Alertas de Reabastecimiento (Stock Bajo)", size=18, weight=ft.FontWeight.BOLD,
-                        color=ft.Colors.RED_700),
+                        color=ft.colors.RED_700),
                 ft.Text("Productos con 2 unidades o menos que requieren pedido urgente:", size=13,
-                        color=ft.Colors.GREY_700),
+                        color=ft.colors.GREY_700),
 
                 # Tarjeta contenedora de la lista de alertas
                 ft.Card(
@@ -67,9 +67,9 @@ class InicioView(ft.Container):
         self.contenedor_metricas.controls.extend([
             self.crear_tarjeta_metrica("Total Productos", str(total_productos), ft.Icons.INVENTORY, ft.Colors.BLUE_700),
             self.crear_tarjeta_metrica("Productos por Agotar", str(cantidad_bajos), ft.Icons.WARNING_AMBER,
-                                       ft.Colors.ORANGE_700),
+                                       ft.colors.ORANGE_700),
             self.crear_tarjeta_metrica("Total Fiados Pendientes", f"${deuda_total:.2f}",
-                                       ft.Icons.ACCOUNT_BALANCE_WALLET, ft.Colors.RED_700)
+                                       ft.Icons.ACCOUNT_BALANCE_WALLET, ft.colors.RED_700)
         ])
 
         # Llenar la lista de alertas de stock bajo
@@ -82,22 +82,22 @@ class InicioView(ft.Container):
                 self.lista_alertas.controls.append(
                     ft.Container(
                         padding=12,
-                        bgcolor=ft.Colors.RED_50,
+                        bgcolor=ft.colors.RED_50,
                         border_radius=8,
                         content=ft.Row([
-                            ft.Icon(ft.Icons.ERROR_OUTLINE, color=ft.Colors.RED_700),
+                            ft.Icon(ft.Icons.ERROR_OUTLINE, color=ft.colors.RED_700),
                             ft.Column([
                                 ft.Text(f"{p['nombre']} (Código: {p['codigo']})", weight=ft.FontWeight.BOLD, size=14,
-                                        color=ft.Colors.RED_900),
+                                        color=ft.colors.RED_900),
                                 ft.Text(
                                     f"Descripción: {p['descripcion'] or 'Sin descripción'} | Precio: ${float(p['precio']):.2f}",
-                                    size=12, color=ft.Colors.GREY_700)
+                                    size=12, color=ft.colors.GREY_700)
                             ], spacing=2, expand=True),
                             ft.Container(
                                 padding=8,  # Padding numérico seguro para cualquier versión de Flet
-                                bgcolor=ft.Colors.RED_700,
+                                bgcolor=ft.colors.RED_700,
                                 border_radius=5,
-                                content=ft.Text(f"¡Quedan {stock_str}!", color=ft.Colors.WHITE,
+                                content=ft.Text(f"¡Quedan {stock_str}!", color=ft.colors.WHITE,
                                                 weight=ft.FontWeight.BOLD, size=12)
                             )
                         ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
@@ -109,9 +109,9 @@ class InicioView(ft.Container):
                     padding=20,
                     alignment=ft.alignment.center,
                     content=ft.Column([
-                        ft.Icon(ft.Icons.CHECK_CIRCLE_OUTLINE, color=ft.Colors.GREEN_700, size=40),
+                        ft.Icon(ft.Icons.CHECK_CIRCLE_OUTLINE, color=ft.colors.GREEN_700, size=40),
                         ft.Text("¡Excelente! No hay productos con stock crítico en este momento.",
-                                color=ft.Colors.GREEN_800, weight=ft.FontWeight.BOLD)
+                                color=ft.colors.GREEN_800, weight=ft.FontWeight.BOLD)
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
                 )
             )
@@ -127,7 +127,7 @@ class InicioView(ft.Container):
                 content=ft.Column([
                     ft.Row([
                         ft.Icon(icono, color=color, size=24),
-                        ft.Text(titulo, color=ft.Colors.GREY_700, size=13, weight=ft.FontWeight.BOLD)
+                        ft.Text(titulo, color=ft.colors.GREY_700, size=13, weight=ft.FontWeight.BOLD)
                     ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                     ft.Divider(height=5, color=ft.Colors.TRANSPARENT),
                     ft.Text(valor, size=22, weight=ft.FontWeight.BOLD, color=color)
