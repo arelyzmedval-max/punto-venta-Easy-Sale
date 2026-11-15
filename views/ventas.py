@@ -24,8 +24,8 @@ class VentasView(ft.Container):
         btn_buscar = ft.Button(
             content=ft.Text("Agregar"),
             icon=ft.Icons.ADD_SHOPPING_CART,
-            bgcolor=ft.Colors.BLUE_700,
-            color=ft.Colors.WHITE,
+            bgcolor=ft.colors.BLUE_700,
+            color=ft.colors.WHITE,
             on_click=self.agregar_por_enter
         )
 
@@ -78,13 +78,13 @@ class VentasView(ft.Container):
 
         self.lbl_subtotal = ft.Text("$0.00", size=16)
         self.lbl_impuesto = ft.Text("$0.00", size=16)
-        self.lbl_total = ft.Text("$0.00", size=22, weight=ft.FontWeight.BOLD, color=ft.Colors.GREEN_700)
+        self.lbl_total = ft.Text("$0.00", size=22, weight=ft.FontWeight.BOLD, color=ft.colors.GREEN_700)
 
         btn_cobrar = ft.Button(
             content=ft.Text("Procesar Venta"),
             icon=ft.Icons.POINT_OF_SALE,
-            bgcolor=ft.Colors.GREEN_700,
-            color=ft.Colors.WHITE,
+            bgcolor=ft.colors.GREEN_700,
+            color=ft.colors.WHITE,
             height=50,
             on_click=self.procesar_venta
         )
@@ -168,7 +168,7 @@ class VentasView(ft.Container):
 
             item = ft.Container(
                 content=ft.Row([
-                    ft.Icon(ft.Icons.PERSON, color=ft.Colors.BLUE_700, size=16),
+                    ft.Icon(ft.Icons.PERSON, color=ft.colors.BLUE_700, size=16),
                     ft.Text(f"{cli['nombre']} ({cli['telefono'] or 'Sin tel'})", size=13, weight=ft.FontWeight.BOLD)
                 ]),
                 padding=8,
@@ -217,11 +217,11 @@ class VentasView(ft.Container):
 
             item_sugerencia = ft.Container(
                 content=ft.Row([
-                    ft.Icon(ft.Icons.SHOPPING_BAG, color=ft.Colors.BLUE_700, size=18),
+                    ft.Icon(ft.Icons.SHOPPING_BAG, color=ft.colors.BLUE_700, size=18),
                     ft.Column([
                         ft.Text(prod['nombre'], weight=ft.FontWeight.BOLD, size=14),
                         ft.Text(f"Código: {prod['codigo']} | Stock: {stock_actual} | ${float(prod['precio']):.2f}",
-                                size=11, color=ft.Colors.GREY_700)
+                                size=11, color=ft.colors.GREY_700)
                     ], spacing=2, expand=True)
                 ]),
                 padding=10,
@@ -246,7 +246,7 @@ class VentasView(ft.Container):
             self.page_ref.update()
             self.evaluar_y_agregar(res[0])
         else:
-            self.mostrar_snack("❌ Producto no encontrado", ft.Colors.RED_700)
+            self.mostrar_snack("❌ Producto no encontrado", ft.colors.RED_700)
 
     def evaluar_y_agregar(self, prod):
         if prod.get('tipo_venta') == 'por kilo':
@@ -261,7 +261,7 @@ class VentasView(ft.Container):
                 cant = float(txt_cantidad.value.replace(",", "."))
                 if cant <= 0: raise ValueError
             except ValueError:
-                self.mostrar_snack("⚠️ Ingresa una cantidad válida", ft.Colors.RED_700)
+                self.mostrar_snack("⚠️ Ingresa una cantidad válida", ft.colors.RED_700)
                 return
             if modal_container in self.page_ref.overlay: self.page_ref.overlay.remove(modal_container)
             self.page_ref.update()
@@ -271,14 +271,14 @@ class VentasView(ft.Container):
             self.page_ref.update()
 
         modal_container = ft.Stack([
-            ft.Container(bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLACK), expand=True, on_click=cancelar),
+            ft.Container(bgcolor=ft.colors.with_opacity(0.5, ft.colors.BLACK), expand=True, on_click=cancelar),
             ft.Row([
                 ft.Container(
-                    bgcolor=ft.Colors.WHITE, padding=20, border_radius=10, width=380,
+                    bgcolor=ft.colors.WHITE, padding=20, border_radius=10, width=380,
                     content=ft.Column([
                         ft.Text(f"Cantidad para: {prod['nombre']}", size=16, weight=ft.FontWeight.BOLD),
                         txt_cantidad,
-                        ft.Row([ft.TextButton("Cancelar", on_click=cancelar), ft.ElevatedButton("Agregar", bgcolor=ft.Colors.BLUE_700, color=ft.Colors.WHITE, on_click=confirmar)], alignment=ft.MainAxisAlignment.END)
+                        ft.Row([ft.TextButton("Cancelar", on_click=cancelar), ft.ElevatedButton("Agregar", bgcolor=ft.colors.BLUE_700, color=ft.colors.WHITE, on_click=confirmar)], alignment=ft.MainAxisAlignment.END)
                     ], tight=True, spacing=15)
                 )
             ], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER, expand=True)
@@ -303,14 +303,14 @@ class VentasView(ft.Container):
             self.page_ref.update()
 
         modal_container = ft.Stack([
-            ft.Container(bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLACK), expand=True, on_click=cancelar),
+            ft.Container(bgcolor=ft.colors.with_opacity(0.5, ft.colors.BLACK), expand=True, on_click=cancelar),
             ft.Row([
                 ft.Container(
-                    bgcolor=ft.Colors.WHITE, padding=20, border_radius=10, width=380,
+                    bgcolor=ft.colors.WHITE, padding=20, border_radius=10, width=380,
                     content=ft.Column([
                         ft.Text(f"Peso para: {prod['nombre']}", size=16, weight=ft.FontWeight.BOLD),
                         txt_peso,
-                        ft.Row([ft.TextButton("Cancelar", on_click=cancelar), ft.ElevatedButton("Agregar", bgcolor=ft.Colors.BLUE_700, color=ft.Colors.WHITE, on_click=confirmar)], alignment=ft.MainAxisAlignment.END)
+                        ft.Row([ft.TextButton("Cancelar", on_click=cancelar), ft.ElevatedButton("Agregar", bgcolor=ft.colors.BLUE_700, color=ft.colors.WHITE, on_click=confirmar)], alignment=ft.MainAxisAlignment.END)
                     ], tight=True, spacing=15)
                 )
             ], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER, expand=True)
@@ -320,7 +320,7 @@ class VentasView(ft.Container):
 
     def procesar_item_al_carrito(self, prod, cantidad=1.0):
         if prod['stock'] <= 0:
-            self.mostrar_snack("⚠️ Sin stock disponible", ft.Colors.ORANGE_800)
+            self.mostrar_snack("⚠️ Sin stock disponible", ft.colors.ORANGE_800)
             return
         for item in self.carrito:
             if item['codigo'] == prod['codigo']:
@@ -375,7 +375,7 @@ class VentasView(ft.Container):
 
     def procesar_venta(self, e):
         if not self.carrito:
-            self.mostrar_snack("⚠️ El carrito está vacío", ft.Colors.ORANGE_800)
+            self.mostrar_snack("⚠️ El carrito está vacío", ft.colors.ORANGE_800)
             return
 
         # 1. VERIFICACIÓN OBLIGATORIA DE CAJA ABIERTA
@@ -383,11 +383,11 @@ class VentasView(ft.Container):
         caja_activa = self.db.obtener_resultados(q_caja, (self.usuario['id_usuario'],))
 
         if not caja_activa:
-            self.mostrar_snack("⚠️ Debe abrir caja antes de realizar una venta", ft.Colors.RED_700)
+            self.mostrar_snack("⚠️ Debe abrir caja antes de realizar una venta", ft.colors.RED_700)
             return
 
         if not self.dd_metodo_pago.value:
-            self.mostrar_snack("⚠️ Selecciona un método de pago", ft.Colors.RED_700)
+            self.mostrar_snack("⚠️ Selecciona un método de pago", ft.colors.RED_700)
             return
 
         metodo_id = int(self.dd_metodo_pago.value)
@@ -400,7 +400,7 @@ class VentasView(ft.Container):
         es_fiado = "fiado" in metodo_texto or "crédito" in metodo_texto or "credito" in metodo_texto
 
         if es_fiado and not self.cliente_seleccionado_id:
-            self.mostrar_snack("⚠️ Debes buscar y seleccionar un cliente válido para el fiado", ft.Colors.RED_700)
+            self.mostrar_snack("⚠️ Debes buscar y seleccionar un cliente válido para el fiado", ft.colors.RED_700)
             return
 
         subtotal = sum(i['precio'] * i['cantidad'] for i in self.carrito)
@@ -428,16 +428,16 @@ class VentasView(ft.Container):
                 self.db.ejecutar_query("UPDATE productos SET stock = stock - %s WHERE codigo = %s",
                                        (item['cantidad'], item['codigo']))
 
-            self.mostrar_snack("✅ Venta procesada con éxito", ft.Colors.GREEN_700)
+            self.mostrar_snack("✅ Venta procesada con éxito", ft.colors.GREEN_700)
             self.carrito.clear()
             self.txt_buscar_cliente.value = ""
             self.cliente_seleccionado_id = None
             self.actualizar_tabla_carrito()
             if self.al_completar_venta: self.al_completar_venta()
         else:
-            self.mostrar_snack("❌ Error al procesar venta", ft.Colors.RED_700)
+            self.mostrar_snack("❌ Error al procesar venta", ft.colors.RED_700)
 
     def mostrar_snack(self, texto, color):
-        snack = ft.SnackBar(content=ft.Text(texto, color=ft.Colors.WHITE), bgcolor=color, open=True)
+        snack = ft.SnackBar(content=ft.Text(texto, color=ft.colors.WHITE), bgcolor=color, open=True)
         self.page_ref.overlay.append(snack)
         self.page_ref.update()
