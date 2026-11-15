@@ -144,10 +144,10 @@ class CajaView(ft.Container):
             self.page_ref.update()
 
         modal_resumen = ft.Stack([
-            ft.Container(bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLACK), expand=True, on_click=cerrar_dialogo),
+            ft.Container(bgcolor=ft.colors.with_opacity(0.5, ft.colors.BLACK), expand=True, on_click=cerrar_dialogo),
             ft.Row([
                 ft.Container(
-                    bgcolor=ft.Colors.WHITE,
+                    bgcolor=ft.colors.WHITE,
                     padding=25,
                     border_radius=10,
                     width=420,
@@ -155,17 +155,17 @@ class CajaView(ft.Container):
                         ft.Text("🔒 Reporte de Corte de Caja", size=18, weight=ft.FontWeight.BOLD),
                         ft.Divider(),
                         ft.Text(f"Fondo Inicial: ${fondo:.2f}"),
-                        ft.Text(f"Ventas en Efectivo: ${efec:.2f}", color=ft.Colors.GREEN_800),
-                        ft.Text(f"Ventas con Tarjeta: ${tarj:.2f}", color=ft.Colors.BLUE_800),
-                        ft.Text(f"Ventas por Transferencia: ${transf:.2f}", color=ft.Colors.PURPLE_800),
+                        ft.Text(f"Ventas en Efectivo: ${efec:.2f}", color=ft.colors.GREEN_800),
+                        ft.Text(f"Ventas con Tarjeta: ${tarj:.2f}", color=ft.colors.BLUE_800),
+                        ft.Text(f"Ventas por Transferencia: ${transf:.2f}", color=ft.colors.PURPLE_800),
                         ft.Divider(),
                         ft.Text(f"Total Ingresos del Día: ${total_v:.2f}", weight=ft.FontWeight.BOLD),
                         ft.Text(f"Dinero Físico Contado: ${real:.2f}"),
                         ft.Text(f"Diferencia en Efectivo: ${dif:.2f}", weight=ft.FontWeight.BOLD,
-                                color=ft.Colors.RED_700 if dif < 0 else ft.Colors.GREEN_700),
+                                color=ft.colors.RED_700 if dif < 0 else ft.colors.GREEN_700),
                         ft.Container(height=10),
                         ft.Row([
-                            ft.ElevatedButton("Aceptar", bgcolor=ft.Colors.BLUE_700, color=ft.Colors.WHITE,
+                            ft.ElevatedButton("Aceptar", bgcolor=ft.colors.BLUE_700, color=ft.colors.WHITE,
                                               on_click=cerrar_dialogo)
                         ], alignment=ft.MainAxisAlignment.END)
                     ], tight=True, spacing=10)
@@ -177,6 +177,6 @@ class CajaView(ft.Container):
         self.page_ref.update()
 
     def mostrar_snack(self, texto, color):
-        snack = ft.SnackBar(content=ft.Text(texto, color=ft.Colors.WHITE), bgcolor=color, open=True)
+        snack = ft.SnackBar(content=ft.Text(texto, color=ft.colors.WHITE), bgcolor=color, open=True)
         self.page_ref.overlay.append(snack)
         self.page_ref.update()
