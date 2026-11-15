@@ -14,15 +14,15 @@ class AdminView(ft.Container):
 
     def crear_interfaz(self):
         # Tarjetas resumen
-        self.lbl_ventas_hoy = ft.Text("$0.00", size=20, weight=ft.FontWeight.BOLD, color=ft.Colors.GREEN_700)
-        self.lbl_num_ventas = ft.Text("0", size=20, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_700)
-        self.lbl_productos_bajo_stock = ft.Text("0", size=20, weight=ft.FontWeight.BOLD, color=ft.Colors.RED_700)
+        self.lbl_ventas_hoy = ft.Text("$0.00", size=20, weight=ft.FontWeight.BOLD, color=ft.colors.GREEN_700)
+        self.lbl_num_ventas = ft.Text("0", size=20, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_700)
+        self.lbl_productos_bajo_stock = ft.Text("0", size=20, weight=ft.FontWeight.BOLD, color=ft.colors.RED_700)
 
         card_ventas = ft.Card(
             content=ft.Container(
                 padding=15,
                 content=ft.Column([
-                    ft.Text("Ventas de Hoy", size=14, color=ft.Colors.GREY_700),
+                    ft.Text("Ventas de Hoy", size=14, color=ft.colors.GREY_700),
                     self.lbl_ventas_hoy
                 ])
             ),
@@ -33,7 +33,7 @@ class AdminView(ft.Container):
             content=ft.Container(
                 padding=15,
                 content=ft.Column([
-                    ft.Text("Total Transacciones", size=14, color=ft.Colors.GREY_700),
+                    ft.Text("Total Transacciones", size=14, color=ft.colors.GREY_700),
                     self.lbl_num_ventas
                 ])
             ),
@@ -44,7 +44,7 @@ class AdminView(ft.Container):
             content=ft.Container(
                 padding=15,
                 content=ft.Column([
-                    ft.Text("Productos con Bajo Stock (<= 5)", size=14, color=ft.Colors.GREY_700),
+                    ft.Text("Productos con Bajo Stock (<= 5)", size=14, color=ft.colors.GREY_700),
                     self.lbl_productos_bajo_stock
                 ])
             ),
