@@ -28,8 +28,8 @@ class CajaView(ft.Container):
 
         self.btn_accion = ft.ElevatedButton(
             content=ft.Text("Abrir Caja"),
-            bgcolor=ft.Colors.GREEN_700,
-            color=ft.Colors.WHITE,
+            bgcolor=ft.colors.GREEN_700,
+            color=ft.colors.WHITE,
             on_click=self.accion_caja
         )
 
@@ -61,7 +61,7 @@ class CajaView(ft.Container):
             self.txt_fondo_inicial.visible = False
             self.txt_dinero_real.visible = True
             self.btn_accion.content = ft.Text("Realizar Corte de Caja (Cierre)")
-            self.btn_accion.bgcolor = ft.Colors.RED_700
+            self.btn_accion.bgcolor = ft.colors.RED_700
         else:
             self.caja_actual = None
             self.lbl_estado_caja.value = "🔴 No hay caja abierta"
@@ -69,7 +69,7 @@ class CajaView(ft.Container):
             self.txt_fondo_inicial.visible = True
             self.txt_dinero_real.visible = False
             self.btn_accion.content = ft.Text("Abrir Caja")
-            self.btn_accion.bgcolor = ft.Colors.GREEN_700
+            self.btn_accion.bgcolor = ft.colors.GREEN_700
 
         self.page_ref.update()
 
