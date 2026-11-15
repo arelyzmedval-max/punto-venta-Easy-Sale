@@ -93,7 +93,7 @@ class HistorialView(ft.Container):
                         ft.DataCell(ft.Text(f"{v['impuesto']}%")),
                         ft.DataCell(ft.Text(f"${float(v['total_venta']):.2f}")),
                         ft.DataCell(
-                            ft.IconButton(ft.Icons.RECEIPT_LONG, icon_color=ft.Colors.BLUE_700, on_click=ver_detalle)
+                            ft.IconButton(ft.Icons.RECEIPT_LONG, icon_color=ft.colors.BLUE_700, on_click=ver_detalle)
                         )
                     ])
                 )
@@ -148,10 +148,10 @@ class HistorialView(ft.Container):
 
         # Ventana modal más ancha y con scroll horizontal seguro
         dlg = ft.Stack([
-            ft.Container(bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLACK), expand=True, on_click=cerrar_modal),
+            ft.Container(bgcolor=ft.colors.with_opacity(0.5, ft.colors.BLACK), expand=True, on_click=cerrar_modal),
             ft.Row([
                 ft.Container(
-                    bgcolor=ft.Colors.WHITE,
+                    bgcolor=ft.colors.WHITE,
                     padding=25,
                     border_radius=10,
                     width=720,
@@ -167,7 +167,7 @@ class HistorialView(ft.Container):
                         ),
                         ft.Divider(),
                         ft.Row([
-                            ft.ElevatedButton("Cerrar", bgcolor=ft.Colors.BLUE_700, color=ft.Colors.WHITE, on_click=cerrar_modal)
+                            ft.ElevatedButton("Cerrar", bgcolor=ft.colors.BLUE_700, color=ft.colors.WHITE, on_click=cerrar_modal)
                         ], alignment=ft.MainAxisAlignment.END)
                     ], tight=True, spacing=10)
                 )
