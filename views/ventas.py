@@ -23,7 +23,7 @@ class VentasView(ft.Container):
 
         btn_buscar = ft.ElevatedButton(
             content=ft.Text("Agregar"),
-            icon=ft.Icons.ADD_SHOPPING_CART,
+            icon=ft.icons.ADD_SHOPPING_CART,
             bgcolor=ft.colors.BLUE_700,
             color=ft.colors.WHITE,
             on_click=self.agregar_por_enter
@@ -47,7 +47,7 @@ class VentasView(ft.Container):
             label="Buscar Cliente (para Fiados)",
             expand=True,
             on_change=self.filtrar_sugerencias_clientes,
-            prefix_icon=ft.Icons.SEARCH
+            prefix_icon=ft.icons.SEARCH
         )
 
         self.lista_clientes_sugeridos = ft.ListView(spacing=3, height=120)
@@ -82,7 +82,7 @@ class VentasView(ft.Container):
 
         btn_cobrar = ft.ElevatedButton(
             content=ft.Text("Procesar Venta"),
-            icon=ft.Icons.POINT_OF_SALE,
+            icon=ft.icons.POINT_OF_SALE,
             bgcolor=ft.colors.GREEN_700,
             color=ft.colors.WHITE,
             height=50,
@@ -168,7 +168,7 @@ class VentasView(ft.Container):
 
             item = ft.Container(
                 content=ft.Row([
-                    ft.Icon(ft.Icons.PERSON, color=ft.colors.BLUE_700, size=16),
+                    ft.Icon(ft.icons.PERSON, color=ft.colors.BLUE_700, size=16),
                     ft.Text(f"{cli['nombre']} ({cli['telefono'] or 'Sin tel'})", size=13, weight=ft.FontWeight.BOLD)
                 ]),
                 padding=8,
@@ -217,7 +217,7 @@ class VentasView(ft.Container):
 
             item_sugerencia = ft.Container(
                 content=ft.Row([
-                    ft.Icon(ft.Icons.SHOPPING_BAG, color=ft.colors.BLUE_700, size=18),
+                    ft.Icon(ft.icons.SHOPPING_BAG, color=ft.colors.BLUE_700, size=18),
                     ft.Column([
                         ft.Text(prod['nombre'], weight=ft.FontWeight.BOLD, size=14),
                         ft.Text(f"Código: {prod['codigo']} | Stock: {stock_actual} | ${float(prod['precio']):.2f}",
