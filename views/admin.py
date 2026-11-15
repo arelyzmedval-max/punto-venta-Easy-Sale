@@ -102,7 +102,7 @@ class AdminView(ft.Container):
                     ft.DataRow(cells=[
                         ft.DataCell(ft.Text(str(p['codigo']))),
                         ft.DataCell(ft.Text(p['nombre'])),
-                        ft.DataCell(ft.Text(str(p['stock']), color=ft.Colors.RED_700, weight=ft.FontWeight.BOLD)),
+                        ft.DataCell(ft.Text(str(p['stock']), color=ft.colors.RED_700, weight=ft.FontWeight.BOLD)),
                         ft.DataCell(ft.Text(f"${float(p['precio']):.2f}")),
                     ])
                 )
