@@ -26,8 +26,8 @@ class ConfiguracionView(ft.Container):
                 ft.ElevatedButton(
                     content=ft.Text("Guardar Configuración"),
                     icon=ft.Icons.SAVE,
-                    bgcolor=ft.Colors.BLUE_700,
-                    color=ft.Colors.WHITE,
+                    bgcolor=ft.colors.BLUE_700,
+                    color=ft.colors.WHITE,
                     on_click=self.guardar_configuracion
                 )
             ], spacing=15, scroll=ft.ScrollMode.AUTO)
@@ -62,6 +62,6 @@ class ConfiguracionView(ft.Container):
             else:
                 self.db.ejecutar_query("INSERT INTO configuracion (clave, valor) VALUES (%s, %s)", (clave, valor))
 
-        snack = ft.SnackBar(content=ft.Text("✅ Configuración guardada correctamente", color=ft.Colors.WHITE), bgcolor=ft.Colors.GREEN_700, open=True)
+        snack = ft.SnackBar(content=ft.Text("✅ Configuración guardada correctamente", color=ft.Colors.WHITE), bgcolor=ft.colors.GREEN_700, open=True)
         self.page_ref.overlay.append(snack)
         self.page_ref.update()
