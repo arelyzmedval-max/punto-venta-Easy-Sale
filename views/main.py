@@ -20,18 +20,18 @@ def main(page: ft.Page):
     db = Database()
 
     # Función que se ejecuta cuando el login es exitoso
+   # Función que se ejecuta cuando el login es exitoso
     def mostrar_dashboard(usuario_actual):
         page.clean()
 
-        body_container = ft.Container(expand=True)
+        body_container = ft.Container(content=None, expand=True)
 
         def cambiar_vista(e):
             selected_index = e.control.selected_index
             body_container.content = views_list[selected_index]
-            page.update()
+            body_container.update()  # Actualizamos específicamente el contenedor del cuerpo
 
         def cerrar_sesion(e):
-            # Al cerrar sesión, regresamos a la pantalla de login
             mostrar_login()
 
         # Lista de vistas que requieren el usuario o la base de datos
@@ -83,10 +83,14 @@ def main(page: ft.Page):
             ],
         )
 
+        # Asignamos la primera vista de inicio explícitamente
         body_container.content = views_list[0]
 
-        page.add(
-            ft.Column([
+        # Estructura principal del Dashboard envuelta en un contenedor con fondo blanco
+        main_layout = ft.Container(
+            expand=True,
+            bgcolor=ft.colors.WHITE,
+            content=ft.Column([
                 header,
                 ft.Row([
                     nav_rail,
@@ -95,8 +99,9 @@ def main(page: ft.Page):
                 ], expand=True)
             ], expand=True)
         )
-        page.update()
 
+        page.add(main_layout)
+        page.update()
     # Función para mostrar la pantalla de inicio de sesión
     def mostrar_login():
         page.clean()
