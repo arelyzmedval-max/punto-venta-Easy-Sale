@@ -21,7 +21,7 @@ class VentasView(ft.Container):
             on_submit=self.agregar_por_enter
         )
 
-        btn_buscar = ft.Button(
+       btn_buscar = ft.ElevatedButton(
             content=ft.Text("Agregar"),
             icon=ft.Icons.ADD_SHOPPING_CART,
             bgcolor=ft.colors.BLUE_700,
