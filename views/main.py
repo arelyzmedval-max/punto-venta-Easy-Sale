@@ -13,8 +13,8 @@ from database import Database
 
 def main(page: ft.Page):
     page.title = "Easy Sale - Punto de Venta"
-    page.window_width = 1200
-    page.window_height = 800
+  page.window.width = 1200
+page.window.height = 800
     page.padding = 0
 
     db = Database()
