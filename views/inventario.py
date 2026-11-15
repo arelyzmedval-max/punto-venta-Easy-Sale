@@ -176,7 +176,7 @@ class InventarioView(ft.Container):
 
     def editar_producto(self, e):
         if not self.codigo_seleccionado:
-            self.mostrar_snack("⚠️ Selecciona un producto de la tabla para editar", ft.Colors.ORANGE_800)
+            self.mostrar_snack("⚠️ Selecciona un producto de la tabla para editar", ft.colors.ORANGE_800)
             return
 
         codigo = self.txt_codigo.value.strip() if self.txt_codigo.value else self.codigo_seleccionado
