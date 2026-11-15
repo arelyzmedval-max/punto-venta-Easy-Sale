@@ -35,7 +35,7 @@ class ClientesView(ft.Container):
                     self.txt_telefono,
                     self.txt_limite,
                     ft.ElevatedButton("Registrar Cliente", icon=ft.Icons.PERSON_ADD, bgcolor=ft.Colors.BLUE_700,
-                                      color=ft.Colors.WHITE, on_click=self.guardar_cliente)
+                                      color=ft.colors.WHITE, on_click=self.guardar_cliente)
                 ], wrap=True, spacing=15),
                 ft.Divider(),
                 ft.Text("Lista de Clientes", size=18, weight=ft.FontWeight.BOLD),
@@ -63,7 +63,7 @@ class ClientesView(ft.Container):
                     self.abrir_modal_credito(cliente)
 
                 deuda = float(c['total_deuda'])
-                color_deuda = ft.Colors.RED_700 if deuda > 0 else ft.Colors.GREEN_700
+                color_deuda = ft.Colors.RED_700 if deuda > 0 else ft.colors.GREEN_700
 
                 self.tabla_clientes.rows.append(
                     ft.DataRow(cells=[
@@ -81,7 +81,7 @@ class ClientesView(ft.Container):
     def guardar_cliente(self, e):
         nombre = self.txt_nombre.value.strip()
         if not nombre:
-            self.mostrar_snack("⚠️ El nombre del cliente es obligatorio", ft.Colors.RED_700)
+            self.mostrar_snack("⚠️ El nombre del cliente es obligatorio", ft.colors.RED_700)
             return
 
         telefono = self.txt_telefono.value.strip()
@@ -94,7 +94,7 @@ class ClientesView(ft.Container):
             "INSERT INTO clientes (nombre, telefono, limite_credito) VALUES (%s, %s, %s)",
             (nombre, telefono, limite)
         )
-        self.mostrar_snack("✅ Cliente registrado con éxito", ft.Colors.GREEN_700)
+        self.mostrar_snack("✅ Cliente registrado con éxito", ft.colors.GREEN_700)
         self.txt_nombre.value = ""
         self.txt_telefono.value = ""
         self.txt_limite.value = "1000.00"
@@ -122,7 +122,7 @@ class ClientesView(ft.Container):
                 "INSERT INTO creditos (id_cliente, id_venta, total_fiado, abono, estado) VALUES (%s, 0, %s, 0.00, 'Pendiente')",
                 (cliente['id_cliente'], monto)
             )
-            self.mostrar_snack("✅ Adeudo agregado correctamente", ft.Colors.GREEN_700)
+            self.mostrar_snack("✅ Adeudo agregado correctamente", ft.colors.GREEN_700)
             cerrar(e)
             self.cargar_clientes()
 
@@ -131,7 +131,7 @@ class ClientesView(ft.Container):
                 abono = float(txt_monto_abono.value.replace(",", "."))
                 if abono <= 0: raise ValueError
             except ValueError:
-                self.mostrar_snack("⚠️ Ingresa un abono válido mayor a 0", ft.Colors.RED_700)
+                self.mostrar_snack("⚠️ Ingresa un abono válido mayor a 0", ft.colors.RED_700)
                 return
 
             # Buscamos los créditos pendientes de este cliente para ir descontando el abono
@@ -164,15 +164,15 @@ class ClientesView(ft.Container):
                     )
                     restante_abono = 0
 
-            self.mostrar_snack("✅ Abono registrado con éxito", ft.Colors.GREEN_700)
+            self.mostrar_snack("✅ Abono registrado con éxito", ft.colors.GREEN_700)
             cerrar(e)
             self.cargar_clientes()
 
         modal = ft.Stack([
-            ft.Container(bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLACK), expand=True, on_click=cerrar),
+            ft.Container(bgcolor=ft.colors.with_opacity(0.5, ft.colors.BLACK), expand=True, on_click=cerrar),
             ft.Row([
                 ft.Container(
-                    bgcolor=ft.Colors.WHITE,
+                    bgcolor=ft.colors.WHITE,
                     padding=25,
                     border_radius=10,
                     width=450,
@@ -180,20 +180,20 @@ class ClientesView(ft.Container):
                         ft.Text(f"Estado de Cuenta: {cliente['nombre']}", size=18, weight=ft.FontWeight.BOLD),
                         ft.Divider(),
                         ft.Text(f"Deuda Total Actual: ${float(cliente['total_deuda']):.2f}", size=16,
-                                color=ft.Colors.RED_700, weight=ft.FontWeight.BOLD),
+                                color=ft.colors.RED_700, weight=ft.FontWeight.BOLD),
                         ft.Text(f"Límite Asignado: ${float(cliente['limite_credito']):.2f}"),
                         ft.Divider(),
                         ft.Text("Agregar Saldo / Deuda Anterior:", weight=ft.FontWeight.BOLD, size=14),
                         txt_monto_cargo,
                         ft.ElevatedButton("Sumar al Debe", icon=ft.Icons.ADD_CARD, bgcolor=ft.Colors.ORANGE_800,
-                                          color=ft.Colors.WHITE, on_click=agregar_cargo_manual),
+                                          color=ft.colors.WHITE, on_click=agregar_cargo_manual),
                         ft.Divider(),
                         ft.Text("Registrar Pago / Abono:", weight=ft.FontWeight.BOLD, size=14),
                         txt_monto_abono,
                         ft.ElevatedButton("Aplicar Abono", icon=ft.Icons.PAYMENTS, bgcolor=ft.Colors.GREEN_700,
-                                          color=ft.Colors.WHITE, on_click=registrar_abono_general),
+                                          color=ft.colors.WHITE, on_click=registrar_abono_general),
                         ft.Container(height=10),
-                        ft.Row([ft.ElevatedButton("Cerrar", bgcolor=ft.Colors.BLUE_700, color=ft.Colors.WHITE,
+                        ft.Row([ft.ElevatedButton("Cerrar", bgcolor=ft.colors.BLUE_700, color=ft.colors.WHITE,
                                                   on_click=cerrar)], alignment=ft.MainAxisAlignment.END)
                     ], tight=True, spacing=10)
                 )
@@ -204,6 +204,6 @@ class ClientesView(ft.Container):
         self.page_ref.update()
 
     def mostrar_snack(self, texto, color):
-        snack = ft.SnackBar(content=ft.Text(texto, color=ft.Colors.WHITE), bgcolor=color, open=True)
+        snack = ft.SnackBar(content=ft.Text(texto, color=ft.colors.WHITE), bgcolor=color, open=True)
         self.page_ref.overlay.append(snack)
         self.page_ref.update()
