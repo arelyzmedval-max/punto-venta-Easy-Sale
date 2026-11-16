@@ -93,7 +93,7 @@ class HistorialView(ft.Container):
                         ft.DataCell(ft.Text(f"{v['impuesto']}%")),
                         ft.DataCell(ft.Text(f"${float(v['total_venta']):.2f}")),
                         ft.DataCell(
-                            ft.IconButton(ft.Icons.RECEIPT_LONG, icon_color=ft.colors.BLUE_700, on_click=ver_detalle)
+                            ft.IconButton(ft.icons.RECEIPT_LONG, icon_color=ft.colors.BLUE_700, on_click=ver_detalle)
                         )
                     ])
                 )
