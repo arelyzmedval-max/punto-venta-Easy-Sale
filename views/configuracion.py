@@ -25,7 +25,7 @@ class ConfiguracionView(ft.Container):
                 ft.Container(height=10),
                 ft.ElevatedButton(
                     content=ft.Text("Guardar Configuración"),
-                    icon=ft.Icons.SAVE,
+                    icon=ft.icons.SAVE,
                     bgcolor=ft.colors.BLUE_700,
                     color=ft.colors.WHITE,
                     on_click=self.guardar_configuracion
