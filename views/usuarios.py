@@ -30,7 +30,7 @@ class UsuariosView(ft.Container):
 
         btn_agregar = ft.ElevatedButton(
             content=ft.Text("Agregar Usuario"),
-            icon=ft.Icons.PERSON_ADD,
+            icon=ft.icons.PERSON_ADD,
             bgcolor=ft.colors.BLUE_700,
             color=ft.colors.WHITE,
             on_click=self.agregar_usuario
@@ -38,7 +38,7 @@ class UsuariosView(ft.Container):
 
         btn_editar = ft.ElevatedButton(
             content=ft.Text("Guardar Cambios"),
-            icon=ft.Icons.SAVE,
+            icon=ft.icons.SAVE,
             bgcolor=ft.colors.AMBER_700,
             color=ft.colors.WHITE,
             on_click=self.editar_usuario
@@ -46,7 +46,7 @@ class UsuariosView(ft.Container):
 
         btn_limpiar = ft.OutlinedButton(
             content=ft.Text("Limpiar Formulario"),
-            icon=ft.Icons.CLEAR_ALL,
+            icon=ft.icons.CLEAR_ALL,
             on_click=self.limpiar_formulario
         )
 
@@ -107,8 +107,8 @@ class UsuariosView(ft.Container):
                         ft.DataCell(ft.Text(u['rol'])),
                         ft.DataCell(
                             ft.Row([
-                                ft.iconButton(ft.Icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_u),
-                                ft.iconButton(ft.Icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_u)
+                                ft.iconButton(ft.icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_u),
+                                ft.iconButton(ft.icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_u)
                             ])
                         )
                     ])
