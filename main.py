@@ -23,7 +23,6 @@ def main(page: ft.Page):
         try:
             page.clean()
 
-            # Diccionario de fábricas: crea cada vista SOLO cuando el usuario entra a ella
             view_factories = [
                 lambda: InicioView(page, db, usuario_actual),
                 lambda: VentasView(page, db, usuario_actual),
@@ -68,7 +67,7 @@ def main(page: ft.Page):
                     ft.Row([
                         ft.Text(f"Usuario: {usuario_actual['nombre']} ({usuario_actual['rol']})", color=ft.colors.WHITE),
                         ft.IconButton(
-                            icon=ft.Icons.LOGOUT,
+                            icon=ft.icons.LOGOUT,
                             icon_color=ft.colors.RED_400,
                             tooltip="Cerrar Sesión",
                             on_click=cerrar_sesion
@@ -84,15 +83,15 @@ def main(page: ft.Page):
                 min_extended_width=180,
                 on_change=cambiar_vista,
                 destinations=[
-                    ft.NavigationRailDestination(icon=ft.Icons.HOME, label="Inicio"),
-                    ft.NavigationRailDestination(icon=ft.Icons.POINT_OF_SALE, label="Ventas"),
-                    ft.NavigationRailDestination(icon=ft.Icons.INVENTORY, label="Inventario"),
-                    ft.NavigationRailDestination(icon=ft.Icons.HISTORY, label="Historial"),
-                    ft.NavigationRailDestination(icon=ft.Icons.BAR_CHART, label="Reportes"),
-                    ft.NavigationRailDestination(icon=ft.Icons.PEOPLE, label="Usuarios"),
-                    ft.NavigationRailDestination(icon=ft.Icons.POINT_OF_SALE_OUTLINED, label="Caja"),
-                    ft.NavigationRailDestination(icon=ft.Icons.PERSON_PIN, label="Clientes"),
-                    ft.NavigationRailDestination(icon=ft.Icons.SETTINGS, label="Configuración"),
+                    ft.NavigationRailDestination(icon=ft.icons.HOME, label="Inicio"),
+                    ft.NavigationRailDestination(icon=ft.icons.POINT_OF_SALE, label="Ventas"),
+                    ft.NavigationRailDestination(icon=ft.icons.INVENTORY, label="Inventario"),
+                    ft.NavigationRailDestination(icon=ft.icons.HISTORY, label="Historial"),
+                    ft.NavigationRailDestination(icon=ft.icons.BAR_CHART, label="Reportes"),
+                    ft.NavigationRailDestination(icon=ft.icons.PEOPLE, label="Usuarios"),
+                    ft.NavigationRailDestination(icon=ft.icons.POINT_OF_SALE_OUTLINED, label="Caja"),
+                    ft.NavigationRailDestination(icon=ft.icons.PERSON_PIN, label="Clientes"),
+                    ft.NavigationRailDestination(icon=ft.icons.SETTINGS, label="Configuración"),
                 ],
             )
 
