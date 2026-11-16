@@ -35,7 +35,7 @@ class InventarioView(ft.Container):
         )
 
         btn_agregar = ft.ElevatedButton(
-            content=ft.Text("Agregar Producto"),
+            content=ft.text("Agregar Producto"),
             icon=ft.icons.ADD,
             bgcolor=ft.colors.BLUE_700,
             color=ft.colors.WHITE,
@@ -43,7 +43,7 @@ class InventarioView(ft.Container):
         )
 
         btn_editar = ft.ElevatedButton(
-            content=ft.Text("Guardar Cambios"),
+            content=ft.text("Guardar Cambios"),
             icon=ft.icons.SAVE,
             bgcolor=ft.colors.AMBER_700,
             color=ft.colors.WHITE,
