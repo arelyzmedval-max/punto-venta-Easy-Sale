@@ -22,7 +22,7 @@ class VentasView(ft.Container):
         )
 
         btn_buscar = ft.ElevatedButton(
-            content=ft.Text("Agregar"),
+            text="Agregar",
             icon=ft.icons.ADD_SHOPPING_CART,
             bgcolor=ft.colors.BLUE_700,
             color=ft.colors.WHITE,
@@ -81,7 +81,7 @@ class VentasView(ft.Container):
         self.lbl_total = ft.Text("$0.00", size=22, weight=ft.FontWeight.BOLD, color=ft.colors.GREEN_700)
 
         btn_cobrar = ft.ElevatedButton(
-            content=ft.Text("Procesar Venta"),
+            text="Procesar Venta",
             icon=ft.icons.POINT_OF_SALE,
             bgcolor=ft.colors.GREEN_700,
             color=ft.colors.WHITE,
@@ -355,7 +355,7 @@ class VentasView(ft.Container):
                     ft.DataCell(ft.Text(cant_str)),
                     ft.DataCell(ft.Text(f"${item['precio']:.2f}")),
                     ft.DataCell(ft.Text(f"${subtotal_item:.2f}")),
-                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color=ft.colors.RED_400, on_click=quitar_item))
+                    ft.DataCell(ft.IconButton(ft.icons.DELETE, icon_color=ft.colors.RED_400, on_click=quitar_item))
                 ])
             )
 
@@ -409,7 +409,7 @@ class VentasView(ft.Container):
         # 2. Registrar la venta principal
         q_venta = "INSERT INTO ventas (id_usuario, metodo_pago_id, impuesto, total_venta) VALUES (%s, %s, %s, %s)"
         cursor = self.db.ejecutar_query(q_venta, (
-        self.usuario['id_usuario'], metodo_id, float(self.txt_impuesto.value or 0), total))
+            self.usuario['id_usuario'], metodo_id, float(self.txt_impuesto.value or 0), total))
 
         if cursor and cursor.lastrowid:
             id_venta = cursor.lastrowid
