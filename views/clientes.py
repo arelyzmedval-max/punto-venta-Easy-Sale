@@ -34,7 +34,7 @@ class ClientesView(ft.Container):
                     self.txt_nombre,
                     self.txt_telefono,
                     self.txt_limite,
-                    ft.ElevatedButton("Registrar Cliente", icon=ft.icons.PERSON_ADD, bgcolor=ft.Colors.BLUE_700,
+                    ft.ElevatedButton("Registrar Cliente", icon=ft.icons.PERSON_ADD, bgcolor=ft.colors.BLUE_700,
                                       color=ft.colors.WHITE, on_click=self.guardar_cliente)
                 ], wrap=True, spacing=15),
                 ft.Divider(),
@@ -63,7 +63,7 @@ class ClientesView(ft.Container):
                     self.abrir_modal_credito(cliente)
 
                 deuda = float(c['total_deuda'])
-                color_deuda = ft.Colors.RED_700 if deuda > 0 else ft.colors.GREEN_700
+                color_deuda = ft.colors.RED_700 if deuda > 0 else ft.colors.GREEN_700
 
                 self.tabla_clientes.rows.append(
                     ft.DataRow(cells=[
@@ -114,7 +114,7 @@ class ClientesView(ft.Container):
                 monto = float(txt_monto_cargo.value.replace(",", "."))
                 if monto <= 0: raise ValueError
             except ValueError:
-                self.mostrar_snack("⚠️ Ingresa un monto válido mayor a 0", ft.Colors.RED_700)
+                self.mostrar_snack("⚠️ Ingresa un monto válido mayor a 0", ft.colors.RED_700)
                 return
 
             # Insertamos un crédito manual (sin id_venta, con id_venta = 0 o NULL)
