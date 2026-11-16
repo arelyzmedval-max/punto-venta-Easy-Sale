@@ -1,99 +1,127 @@
 import flet as ft
 
-class CajaView(ft.Container):
+class ClientesView(ft.Container):
     def __init__(self, page: ft.Page, db, usuario):
         super().__init__(expand=True)
         self.page_ref = page
         self.db = db
         self.usuario = usuario
-        
+
         self.crear_interfaz()
-        self.verificar_estado_caja()
+        self.cargar_clientes()
 
     def crear_interfaz(self):
-        self.txt_fondo_inicial = ft.TextField(
-            label="Fondo Inicial en Efectivo ($)",
-            value="500.00",
-            keyboard_type=ft.KeyboardType.NUMBER,
-            width=300
-        )
+        self.txt_nombre = ft.TextField(label="Nombre del Cliente", expand=True)
+        self.txt_telefono = ft.TextField(label="Teléfono", expand=True)
+        self.txt_limite = ft.TextField(label="Límite de Crédito ($)", value="1000.00", width=150, keyboard_type=ft.KeyboardType.NUMBER)
 
-        self.btn_abrir = ft.ElevatedButton(
-            text="Abrir Caja",
-            icon=ft.icons.LOCK_OPEN,
-            bgcolor=ft.colors.GREEN_700,
+        btn_registrar = ft.ElevatedButton(
+            text="Registrar Cliente",
+            icon=ft.icons.PERSON_ADD,
+            bgcolor=ft.colors.BLUE_700,
             color=ft.colors.WHITE,
-            on_click=self.abrir_caja
+            on_click=self.registrar_cliente
         )
 
-        self.btn_cerrar = ft.ElevatedButton(
-            text="Cerrar Caja (Corte)",
-            icon=ft.icons.LOCK,
-            bgcolor=ft.colors.RED_700,
-            color=ft.colors.WHITE,
-            on_click=self.cerrar_caja
+        self.tabla_clientes = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("ID")),
+                ft.DataColumn(ft.Text("Nombre")),
+                ft.DataColumn(ft.Text("Teléfono")),
+                ft.DataColumn(ft.Text("Deuda Actual")),
+                ft.DataColumn(ft.Text("Límite Crédito")),
+                ft.DataColumn(ft.Text("Acciones")),
+            ],
+            rows=[]
         )
 
-        self.lbl_estado = ft.Text("Verificando estado de caja...", size=16, weight=ft.FontWeight.BOLD)
-        self.contenedor_acciones = ft.Column(spacing=15)
-
-        # Contenedor principal con ALINEACIÓN SUPERIOR (top_left) para que no quede abajo
+        # Contenedor principal con ALINEACIÓN SUPERIOR (top_left)
         self.content = ft.Container(
             padding=20,
             alignment=ft.alignment.top_left,
             content=ft.Column([
-                ft.Text("Gestión de Caja y Corte", size=22, weight=ft.FontWeight.BOLD),
+                ft.Text("Gestión de Clientes y Créditos (Fiados)", size=22, weight=ft.FontWeight.BOLD),
                 ft.Divider(),
-                self.lbl_estado,
-                self.contenedor_acciones
+                ft.Row([self.txt_nombre, self.txt_telefono, self.txt_limite, btn_registrar]),
+                ft.Divider(),
+                ft.Text("Lista de Clientes", size=18, weight=ft.FontWeight.BOLD),
+                ft.Container(
+                    content=ft.ListView([self.tabla_clientes], expand=True),
+                    expand=True
+                )
             ], tight=True, spacing=15, scroll=ft.ScrollMode.AUTO),
             expand=True
         )
 
-    def verificar_estado_caja(self):
-        q = "SELECT id_caja, fondo_inicial, fecha_apertura FROM caja WHERE id_usuario = %s AND estado = 'ABIERTA' LIMIT 1"
-        caja_activa = self.db.obtener_resultados(q, (self.usuario['id_usuario'],))
+    def cargar_clientes(self):
+        self.tabla_clientes.rows.clear()
+        resultados = self.db.obtener_resultados("""
+            SELECT c.id_crediticio AS id_cliente, c.id_cliente AS cli_id_real, 
+                   COALESCE(cli.nombre, 'Desconocido') AS nombre, 
+                   COALESCE(cli.telefono, 'N/A') AS telefono, 
+                   c.total_fiado - c.abono AS deuda_actual, c.total_fiado AS limite_credito
+            FROM creditos c
+            LEFT JOIN clientes cli ON c.id_cliente = cli.id_cliente
+            WHERE c.estado = 'Pendiente'
+        """)
+        
+        # Si tienes una tabla de clientes pura, ajustamos la consulta si es necesario:
+        res_clientes = self.db.obtener_resultados("SELECT * FROM clientes")
 
-        self.contenedor_acciones.controls.clear()
+        if res_clientes:
+            for cli in res_clientes:
+                id_cli = cli['id_cliente']
+                
+                # Calcular deuda pendiente de este cliente
+                deuda_res = self.db.obtener_resultados(
+                    "SELECT SUM(total_fiado - abono) as deuda FROM creditos WHERE id_cliente = %s AND estado = 'Pendiente'", 
+                    (id_cli,)
+                )
+                deuda_actual = float(deuda_res[0]['deuda'] or 0.0) if deuda_res else 0.0
 
-        if caja_activa:
-            caja = caja_activa[0]
-            self.lbl_estado.value = f"🟢 Caja Abierta el {caja['fecha_apertura']} con un fondo inicial de ${float(caja['fondo_inicial']):.2f}"
-            self.lbl_estado.color = ft.colors.GREEN_700
-            
-            self.contenedor_acciones.controls.append(self.btn_cerrar)
-        else:
-            self.lbl_estado.value = "🔴 No hay caja abierta. Ingrese el fondo inicial para comenzar su turno."
-            self.lbl_estado.color = ft.colors.RED_700
-            
-            self.contenedor_acciones.controls.extend([
-                self.txt_fondo_inicial,
-                self.btn_abrir
-            ])
+                def ver_detalles(e, id_c=id_cli, nom=cli['nombre']):
+                    self.mostrar_snack(f"Abriendo créditos para {nom}", ft.colors.BLUE_700)
 
+                self.tabla_clientes.rows.append(
+                    ft.DataRow(cells=[
+                        ft.DataCell(ft.Text(str(id_cli))),
+                        ft.DataCell(ft.Text(cli['nombre'])),
+                        ft.DataCell(ft.Text(cli.get('telefono') or 'N/A')),
+                        ft.DataCell(ft.Text(f"${deuda_actual:.2f}", color=ft.colors.RED_700 if deuda_actual > 0 else ft.colors.GREEN_700, weight=ft.FontWeight.BOLD)),
+                        ft.DataCell(ft.Text(f"${float(cli.get('limite_credito', 1000.00)):.2f}")),
+                        ft.DataCell(ft.ElevatedButton(
+                            text="Créditos / Abonos",
+                            icon=ft.icons.ACCOUNT_BALANCE_WALLET,
+                            scale=0.85,
+                            on_click=ver_detalles
+                        ))
+                    ])
+                )
         self.page_ref.update()
 
-    def abrir_caja(self, e):
+    def registrar_cliente(self, e):
+        nombre = self.txt_nombre.value.strip() if self.txt_nombre.value else ""
+        telefono = self.txt_telefono.value.strip() if self.txt_telefono.value else ""
+        
         try:
-            fondo = float(self.txt_fondo_inicial.value.replace(",", "."))
-            if fondo < 0:
-                raise ValueError
+            limite = float(self.txt_limite.value.replace(",", ".")) if self.txt_limite.value else 1000.00
         except ValueError:
-            self.mostrar_snack("⚠️ Ingrese un fondo inicial válido", ft.colors.RED_700)
+            limite = 1000.00
+
+        if not nombre:
+            self.mostrar_snack("⚠️ El nombre del cliente es obligatorio", ft.colors.RED_700)
             return
 
-        q = "INSERT INTO caja (id_usuario, fondo_inicial, estado) VALUES (%s, %s, 'ABIERTA')"
-        self.db.ejecutar_query(q, (self.usuario['id_usuario'], fondo))
-        
-        self.mostrar_snack("✅ Caja abierta con éxito", ft.colors.GREEN_700)
-        self.verificar_estado_caja()
+        self.db.ejecutar_query(
+            "INSERT INTO clientes (nombre, telefono, limite_credito) VALUES (%s, %s, %s)",
+            (nombre, telefono, limite)
+        )
 
-    def cerrar_caja(self, e):
-        q = "UPDATE caja SET estado = 'CERRADA', fecha_cierre = NOW() WHERE id_usuario = %s AND estado = 'ABIERTA'"
-        self.db.ejecutar_query(q, (self.usuario['id_usuario'],))
-        
-        self.mostrar_snack("🔒 Caja cerrada (Corte realizado)", ft.colors.ORANGE_800)
-        self.verificar_estado_caja()
+        self.mostrar_snack("✅ Cliente registrado con éxito", ft.colors.GREEN_700)
+        self.txt_nombre.value = ""
+        self.txt_telefono.value = ""
+        self.txt_limite.value = "1000.00"
+        self.cargar_clientes()
 
     def mostrar_snack(self, texto, color):
         snack = ft.SnackBar(content=ft.Text(texto, color=ft.colors.WHITE), bgcolor=color, open=True)
