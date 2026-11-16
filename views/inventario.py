@@ -36,7 +36,7 @@ class InventarioView(ft.Container):
 
         btn_agregar = ft.ElevatedButton(
             content=ft.Text("Agregar Producto"),
-            icon=ft.Icons.ADD,
+            icon=ft.icons.ADD,
             bgcolor=ft.colors.BLUE_700,
             color=ft.colors.WHITE,
             on_click=self.agregar_producto
@@ -44,7 +44,7 @@ class InventarioView(ft.Container):
 
         btn_editar = ft.ElevatedButton(
             content=ft.Text("Guardar Cambios"),
-            icon=ft.Icons.SAVE,
+            icon=ft.icons.SAVE,
             bgcolor=ft.colors.AMBER_700,
             color=ft.colors.WHITE,
             on_click=self.editar_producto
@@ -52,7 +52,7 @@ class InventarioView(ft.Container):
 
         btn_limpiar = ft.OutlinedButton(
             content=ft.Text("Limpiar Formulario"),
-            icon=ft.Icons.CLEAR_ALL,
+            icon=ft.icons.CLEAR_ALL,
             on_click=self.limpiar_formulario
         )
 
@@ -121,8 +121,8 @@ class InventarioView(ft.Container):
                         ft.DataCell(ft.Text(p['tipo_venta'])),
                         ft.DataCell(
                             ft.Row([
-                                ft.iconButton(ft.Icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_p),
-                                ft.iconButton(ft.Icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_p)
+                                ft.iconButton(ft.icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_p),
+                                ft.iconButton(ft.icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_p)
                             ])
                         )
                     ])
