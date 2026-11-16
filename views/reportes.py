@@ -8,7 +8,7 @@ class ReportesView(ft.Container):
         self.crear_interfaz()
 
     def crear_interfaz(self):
-        btn_generar = ft.Button(
+        btn_generar = ft.ElevatedButton(
             content=ft.Text("Generar Reporte"),
             icon=ft.Icons.ANALYTICS,
             bgcolor=ft.colors.GREEN_700,
