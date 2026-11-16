@@ -34,7 +34,7 @@ class ClientesView(ft.Container):
                     self.txt_nombre,
                     self.txt_telefono,
                     self.txt_limite,
-                    ft.ElevatedButton("Registrar Cliente", icon=ft.Icons.PERSON_ADD, bgcolor=ft.Colors.BLUE_700,
+                    ft.ElevatedButton("Registrar Cliente", icon=ft.icons.PERSON_ADD, bgcolor=ft.Colors.BLUE_700,
                                       color=ft.colors.WHITE, on_click=self.guardar_cliente)
                 ], wrap=True, spacing=15),
                 ft.Divider(),
@@ -72,7 +72,7 @@ class ClientesView(ft.Container):
                         ft.DataCell(ft.Text(c['telefono'] or 'N/A')),
                         ft.DataCell(ft.Text(f"${deuda:.2f}", color=color_deuda, weight=ft.FontWeight.BOLD)),
                         ft.DataCell(ft.Text(f"${float(c['limite_credito']):.2f}")),
-                        ft.DataCell(ft.ElevatedButton("Créditos / Abonos", icon=ft.Icons.ACCOUNT_BALANCE_WALLET,
+                        ft.DataCell(ft.ElevatedButton("Créditos / Abonos", icon=ft.icons.ACCOUNT_BALANCE_WALLET,
                                                       on_click=ver_estado_cuenta))
                     ])
                 )
@@ -185,12 +185,12 @@ class ClientesView(ft.Container):
                         ft.Divider(),
                         ft.Text("Agregar Saldo / Deuda Anterior:", weight=ft.FontWeight.BOLD, size=14),
                         txt_monto_cargo,
-                        ft.ElevatedButton("Sumar al Debe", icon=ft.Icons.ADD_CARD, bgcolor=ft.colors.ORANGE_800,
+                        ft.ElevatedButton("Sumar al Debe", icon=ft.icons.ADD_CARD, bgcolor=ft.colors.ORANGE_800,
                                           color=ft.colors.WHITE, on_click=agregar_cargo_manual),
                         ft.Divider(),
                         ft.Text("Registrar Pago / Abono:", weight=ft.FontWeight.BOLD, size=14),
                         txt_monto_abono,
-                        ft.ElevatedButton("Aplicar Abono", icon=ft.Icons.PAYMENTS, bgcolor=ft.colors.GREEN_700,
+                        ft.ElevatedButton("Aplicar Abono", icon=ft.icons.PAYMENTS, bgcolor=ft.colors.GREEN_700,
                                           color=ft.colors.WHITE, on_click=registrar_abono_general),
                         ft.Container(height=10),
                         ft.Row([ft.ElevatedButton("Cerrar", bgcolor=ft.colors.BLUE_700, color=ft.colors.WHITE,
