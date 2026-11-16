@@ -1,63 +1,52 @@
 import flet as ft
 
 class InventarioView(ft.Container):
-    def __init__(self, page: ft.Page, db, usuario=None):
+    def __init__(self, page: ft.Page, db):
         super().__init__(expand=True)
         self.page_ref = page
         self.db = db
-        self.usuario = usuario
-        self.codigo_seleccionado = None
+        self.producto_editando_codigo = None
 
         self.crear_interfaz()
-        self.cargar_datos_tabla()
-
-    def did_mount(self):
-        # Se ejecuta automáticamente cada vez que entras a la pestaña de Inventario
-        self.cargar_datos_tabla()
+        self.cargar_productos()
 
     def crear_interfaz(self):
-        # Campos del Formulario
+        # Campos del formulario de inventario
         self.txt_codigo = ft.TextField(label="Código", expand=True)
         self.txt_nombre = ft.TextField(label="Nombre", expand=True)
         self.txt_descripcion = ft.TextField(label="Descripción", expand=True)
-        self.txt_precio = ft.TextField(label="Precio", keyboard_type=ft.KeyboardType.NUMBER, expand=True)
-        self.txt_stock = ft.TextField(label="Stock", keyboard_type=ft.KeyboardType.NUMBER, expand=True)
-
+        
+        self.txt_precio = ft.TextField(label="Precio ($)", keyboard_type=ft.KeyboardType.NUMBER, width=200)
+        self.txt_stock = ft.TextField(label="Stock Inicial", keyboard_type=ft.KeyboardType.NUMBER, width=200)
+        
         self.dd_tipo_venta = ft.Dropdown(
             label="Tipo de Venta",
+            value="por unidad",
             options=[
                 ft.dropdown.Option("por unidad"),
-                ft.dropdown.Option("por kilo"),
-                ft.dropdown.Option("por paquete")
+                ft.dropdown.Option("por kilo")
             ],
-            value="por unidad",
-            expand=True
+            width=200
         )
 
-        btn_agregar = ft.ElevatedButton(
-            content=ft.text("Agregar Producto"),
-            icon=ft.icons.ADD,
+        self.btn_guardar = ft.ElevatedButton(
+            text="Guardar Producto",
+            icon=ft.icons.SAVE,
             bgcolor=ft.colors.BLUE_700,
             color=ft.colors.WHITE,
-            on_click=self.agregar_producto
+            on_click=self.guardar_producto
         )
 
-        btn_editar = ft.ElevatedButton(
-            content=ft.text("Guardar Cambios"),
-            icon=ft.icons.SAVE,
-            bgcolor=ft.colors.AMBER_700,
+        self.btn_cancelar = ft.ElevatedButton(
+            text="Cancelar Edición",
+            icon=ft.icons.CANCEL,
+            bgcolor=ft.colors.GREY_700,
             color=ft.colors.WHITE,
-            on_click=self.editar_producto
-        )
-
-        btn_limpiar = ft.OutlinedButton(
-            content=ft.Text("Limpiar Formulario"),
-            icon=ft.icons.CLEAR_ALL,
+            visible=False,
             on_click=self.limpiar_formulario
         )
 
-        # Tabla del Inventario
-        self.tabla_inventario = ft.DataTable(
+        self.tabla_productos = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("Código")),
                 ft.DataColumn(ft.Text("Nombre")),
@@ -70,197 +59,119 @@ class InventarioView(ft.Container):
             rows=[]
         )
 
-        # Contenedor Visual
-        self.content = ft.Column([
-            ft.Card(
-                content=ft.Container(
-                    padding=15,
-                    content=ft.Column([
-                        ft.Text("Gestión de Inventario y Productos", size=18, weight=ft.FontWeight.BOLD),
-                        ft.Row([self.txt_codigo, self.txt_nombre, self.txt_descripcion]),
-                        ft.Row([self.txt_precio, self.txt_stock, self.dd_tipo_venta]),
-                        ft.Row([btn_agregar, btn_editar, btn_limpiar], alignment=ft.MainAxisAlignment.END)
-                    ], spacing=10)
+        self.content = ft.Container(
+            padding=20,
+            alignment=ft.alignment.top_left,
+            content=ft.Column([
+                ft.Text("Gestión de Inventario y Productos", size=22, weight=ft.FontWeight.BOLD),
+                ft.Divider(),
+                ft.Row([self.txt_codigo, self.txt_nombre, self.txt_descripcion]),
+                ft.Row([self.txt_precio, self.txt_stock, self.dd_tipo_venta, self.btn_guardar, self.btn_cancelar]),
+                ft.Divider(),
+                ft.Text("Productos Registrados", size=18, weight=ft.FontWeight.BOLD),
+                ft.Container(
+                    content=ft.ListView([self.tabla_productos], expand=True),
+                    expand=True
                 )
-            ),
-            ft.Card(
-                expand=True,
-                content=ft.Container(
-                    padding=10,
-                    content=ft.Column([
-                        ft.Text("Productos Registrados", size=16, weight=ft.FontWeight.BOLD),
-                        ft.ListView([self.tabla_inventario], expand=True)
-                    ])
-                )
-            )
-        ], expand=True, spacing=10)
+            ], tight=True, spacing=15, scroll=ft.ScrollMode.AUTO),
+            expand=True
+        )
 
-    def cargar_datos_tabla(self):
-        self.tabla_inventario.rows.clear()
-        productos = self.db.obtener_resultados("SELECT * FROM productos")
+    def cargar_productos(self):
+        self.tabla_productos.rows.clear()
+        resultados = self.db.obtener_resultados("SELECT * FROM productos")
+        if resultados:
+            for prod in resultados:
+                codigo = prod['codigo']
+                
+                def editar(e, p=prod):
+                    self.producto_editando_codigo = p['codigo']
+                    self.txt_codigo.value = str(p['codigo'])
+                    self.txt_codigo.disabled = True  # No se edita la PK
+                    self.txt_nombre.value = p['nombre']
+                    self.txt_descripcion.value = p['descripcion'] or ""
+                    self.txt_precio.value = str(p['precio'])
+                    self.txt_stock.value = str(p['stock'])
+                    self.dd_tipo_venta.value = p.get('tipo_venta', 'por unidad')
+                    self.btn_guardar.text = "Actualizar Producto"
+                    self.btn_cancelar.visible = True
+                    self.page_ref.update()
 
-        if productos:
-            for p in productos:
-                def cargar_p(e, prod=p):
-                    self.cargar_producto_en_formulario(prod)
+                def eliminar(e, cod=codigo):
+                    self.db.ejecutar_query("DELETE FROM productos WHERE codigo = %s", (cod,))
+                    self.mostrar_snack("🗑️ Producto eliminado", ft.colors.RED_700)
+                    self.cargar_productos()
 
-                def eliminar_p(e, cod=p['codigo']):
-                    self.eliminar_producto(cod)
+                stock_str = f"{float(prod['stock']):.3f} kg" if prod.get('tipo_venta') == 'por kilo' else str(int(prod['stock']) if float(prod['stock']).is_integer() else prod['stock'])
 
-                stock_val = float(p['stock'])
-                stock_str = f"{stock_val:.3f} kg" if p.get('tipo_venta') == 'por kilo' else str(int(stock_val) if stock_val.is_integer() else stock_val)
-                color_stock = ft.colors.RED_700 if stock_val <= 0 else ft.colors.BLACK
-
-                self.tabla_inventario.rows.append(
+                self.tabla_productos.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(str(p['codigo']))),
-                        ft.DataCell(ft.Text(p['nombre'])),
-                        ft.DataCell(ft.Text(p['descripcion'] or '')),
-                        ft.DataCell(ft.Text(f"${float(p['precio']):.2f}")),
-                        ft.DataCell(ft.Text(stock_str, color=color_stock, weight=ft.FontWeight.BOLD)),
-                        ft.DataCell(ft.Text(p['tipo_venta'])),
-                        ft.DataCell(
-                            ft.Row([
-                                ft.IconButton(ft.icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_p),
-                                ft.IconButton(ft.icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_p)
-                            ])
-                        )
+                        ft.DataCell(ft.Text(str(codigo))),
+                        ft.DataCell(ft.Text(prod['nombre'])),
+                        ft.DataCell(ft.Text(prod['descripcion'] or "")),
+                        ft.DataCell(ft.Text(f"${float(prod['precio']):.2f}")),
+                        ft.DataCell(ft.Text(stock_str)),
+                        ft.DataCell(ft.Text(prod.get('tipo_venta', 'por unidad'))),
+                        ft.DataCell(ft.Row([
+                            ft.IconButton(ft.icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=editar, tooltip="Editar"),
+                            ft.IconButton(ft.icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar, tooltip="Eliminar")
+                        ], spacing=0))
                     ])
                 )
-        if self.page_ref:
-            self.page_ref.update()
+        self.page_ref.update()
 
-    def obtener_siguiente_codigo_autogenerado(self):
-        query = """
-            SELECT MAX(CAST(codigo AS UNSIGNED)) AS ultimo_id 
-            FROM productos 
-            WHERE codigo REGEXP '^[0-9]+$' AND LENGTH(codigo) <= 6
-        """
-        res = self.db.obtener_resultados(query)
-        if res and res[0]['ultimo_id'] is not None:
-            return str(int(res[0]['ultimo_id']) + 1)
-        return "1"
-
-    def agregar_producto(self, e):
+    def guardar_producto(self, e):
         codigo = self.txt_codigo.value.strip() if self.txt_codigo.value else ""
         nombre = self.txt_nombre.value.strip() if self.txt_nombre.value else ""
         descripcion = self.txt_descripcion.value.strip() if self.txt_descripcion.value else ""
-        precio = self.txt_precio.value.strip() if self.txt_precio.value else ""
-        stock = self.txt_stock.value.strip() if self.txt_stock.value else ""
-        tipo_venta = self.dd_tipo_venta.value
-
-        if not codigo:
-            codigo = self.obtener_siguiente_codigo_autogenerado()
-
-        if not (nombre and precio and stock and tipo_venta):
-            self.mostrar_snack("⚠️ Nombre, precio y stock son obligatorios", ft.colors.RED_700)
-            return
-
+        
         try:
-            precio_val = float(precio)
-            stock_val = float(stock)
-            if precio_val < 0 or stock_val < 0:
-                raise ValueError
+            precio = float(self.txt_precio.value.replace(",", ".")) if self.txt_precio.value else 0.0
+            stock = float(self.txt_stock.value.replace(",", ".")) if self.txt_stock.value else 0.0
         except ValueError:
-            self.mostrar_snack("⚠️ Precio y stock deben ser números positivos", ft.colors.RED_700)
+            self.mostrar_snack("⚠️ Precio y stock deben ser numéricos", ft.colors.RED_700)
             return
 
-        query = "INSERT INTO productos (codigo, nombre, descripcion, precio, stock, tipo_venta) VALUES (%s, %s, %s, %s, %s, %s)"
-        try:
-            self.db.ejecutar_query(query, (codigo, nombre, descripcion, precio_val, stock_val, tipo_venta))
-            self.mostrar_snack(f"✅ Producto agregado con código: {codigo}", ft.colors.GREEN_700)
-            self.limpiar_formulario()
-            self.cargar_datos_tabla()
-        except Exception as ex:
-            self.mostrar_snack(f"❌ Error al agregar producto: {ex}", ft.colors.RED_700)
-
-    def editar_producto(self, e):
-        if not self.codigo_seleccionado:
-            self.mostrar_snack("⚠️ Selecciona un producto de la tabla para editar", ft.colors.ORANGE_800)
+        if not codigo or not nombre:
+            self.mostrar_snack("⚠️ El código y el nombre son obligatorios", ft.colors.RED_700)
             return
 
-        codigo = self.txt_codigo.value.strip() if self.txt_codigo.value else self.codigo_seleccionado
-        nombre = self.txt_nombre.value.strip() if self.txt_nombre.value else ""
-        descripcion = self.txt_descripcion.value.strip() if self.txt_descripcion.value else ""
-        precio = self.txt_precio.value.strip() if self.txt_precio.value else ""
-        stock = self.txt_stock.value.strip() if self.txt_stock.value else ""
-        tipo_venta = self.dd_tipo_venta.value
+        tipo_v = self.dd_tipo_venta.value
 
-        try:
-            precio_val = float(precio)
-            stock_val = float(stock)
-            if precio_val < 0 or stock_val < 0:
-                raise ValueError
-        except ValueError:
-            self.mostrar_snack("⚠️ Precio y stock deben ser números positivos", ft.colors.RED_700)
-            return
+        if self.producto_editando_codigo:
+            # Actualizar
+            self.db.ejecutar_query(
+                "UPDATE productos SET nombre = %s, descripcion = %s, precio = %s, stock = %s, tipo_venta = %s WHERE codigo = %s",
+                (nombre, descripcion, precio, stock, tipo_v, self.producto_editando_codigo)
+            )
+            self.mostrar_snack("✅ Producto actualizado con éxito", ft.colors.GREEN_700)
+        else:
+            # Insertar nuevo
+            existe = self.db.obtener_resultados("SELECT * FROM productos WHERE codigo = %s", (codigo,))
+            if existe:
+                self.mostrar_snack("⚠️ Ya existe un producto con ese código", ft.colors.RED_700)
+                return
+            self.db.ejecutar_query(
+                "INSERT INTO productos (codigo, nombre, descripcion, precio, stock, tipo_venta) VALUES (%s, %s, %s, %s, %s, %s)",
+                (codigo, nombre, descripcion, precio, stock, tipo_v)
+            )
+            self.mostrar_snack("✅ Producto guardado con éxito", ft.colors.GREEN_700)
 
-        query = """
-            UPDATE productos
-            SET codigo = %s, nombre = %s, descripcion = %s, precio = %s, stock = %s, tipo_venta = %s
-            WHERE codigo = %s
-        """
-        cursor = self.db.ejecutar_query(query, (
-            codigo, nombre, descripcion, precio_val, stock_val, tipo_venta, self.codigo_seleccionado
-        ))
-        if cursor is not None:
-            self.mostrar_snack("✅ Producto actualizado exitosamente", ft.colors.GREEN_700)
-            self.limpiar_formulario()
-            self.cargar_datos_tabla()
+        self.limpiar_formulario(None)
+        self.cargar_productos()
 
-    def eliminar_producto(self, codigo):
-        def confirmar(e):
-            if dlg in self.page_ref.overlay:
-                self.page_ref.overlay.remove(dlg)
-            self.db.ejecutar_query("DELETE FROM productos WHERE codigo = %s", (codigo,))
-            self.mostrar_snack("✅ Producto eliminado", ft.colors.GREEN_700)
-            self.cargar_datos_tabla()
-
-        def cancelar(e):
-            if dlg in self.page_ref.overlay:
-                self.page_ref.overlay.remove(dlg)
-            self.page_ref.update()
-
-        # Modal seguro compatible con tu versión usando Stack overlay
-        dlg = ft.Stack([
-            ft.Container(bgcolor=ft.colors.with_opacity(0.5, ft.colors.BLACK), expand=True, on_click=cancelar),
-            ft.Row([
-                ft.Container(
-                    bgcolor=ft.colors.WHITE, padding=20, border_radius=10, width=380,
-                    content=ft.Column([
-                        ft.Text("Confirmar Eliminación", size=16, weight=ft.FontWeight.BOLD),
-                        ft.Text(f"¿Deseas eliminar el producto con código '{codigo}'?"),
-                        ft.Row([
-                            ft.TextButton("Cancelar", on_click=cancelar),
-                            ft.ElevatedButton("Eliminar", bgcolor=ft.colors.RED_700, color=ft.colors.WHITE, on_click=confirmar)
-                        ], alignment=ft.MainAxisAlignment.END)
-                    ], tight=True, spacing=15)
-                )
-            ], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER, expand=True)
-        ])
-        self.page_ref.overlay.append(dlg)
-        self.page_ref.update()
-
-    def cargar_producto_en_formulario(self, producto):
-        self.codigo_seleccionado = producto['codigo']
-        self.txt_codigo.value = str(producto['codigo'])
-        self.txt_nombre.value = producto['nombre']
-        self.txt_descripcion.value = producto['descripcion'] or ""
-        self.txt_precio.value = str(producto['precio'])
-        self.txt_stock.value = str(producto['stock'])
-        self.dd_tipo_venta.value = producto['tipo_venta']
-        self.page_ref.update()
-
-    def limpiar_formulario(self, e=None):
-        self.codigo_seleccionado = None
+    def limpiar_formulario(self, e):
+        self.producto_editando_codigo = None
         self.txt_codigo.value = ""
+        self.txt_codigo.disabled = False
         self.txt_nombre.value = ""
         self.txt_descripcion.value = ""
         self.txt_precio.value = ""
         self.txt_stock.value = ""
         self.dd_tipo_venta.value = "por unidad"
-        if self.page_ref:
-            self.page_ref.update()
+        self.btn_guardar.text = "Guardar Producto"
+        self.btn_cancelar.visible = False
+        self.page_ref.update()
 
     def mostrar_snack(self, texto, color):
         snack = ft.SnackBar(content=ft.Text(texto, color=ft.colors.WHITE), bgcolor=color, open=True)
