@@ -62,6 +62,6 @@ class ConfiguracionView(ft.Container):
             else:
                 self.db.ejecutar_query("INSERT INTO configuracion (clave, valor) VALUES (%s, %s)", (clave, valor))
 
-        snack = ft.SnackBar(content=ft.Text("✅ Configuración guardada correctamente", color=ft.Colors.WHITE), bgcolor=ft.colors.GREEN_700, open=True)
+        snack = ft.SnackBar(content=ft.Text("✅ Configuración guardada correctamente", color=ft.colors.WHITE), bgcolor=ft.colors.GREEN_700, open=True)
         self.page_ref.overlay.append(snack)
         self.page_ref.update()
