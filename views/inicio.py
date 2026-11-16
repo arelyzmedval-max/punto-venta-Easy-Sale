@@ -64,9 +64,9 @@ class InicioView(ft.Container):
 
             # Tarjetas de métricas superiores
             self.contenedor_metricas.controls.extend([
-                self.crear_tarjeta_metrica("Total Productos", str(total_productos), ft.Icons.INVENTORY, ft.colors.BLUE_700),
-                self.crear_tarjeta_metrica("Productos por Agotar", str(cantidad_bajos), ft.Icons.WARNING_AMBER, ft.colors.ORANGE_700),
-                self.crear_tarjeta_metrica("Total Fiados Pendientes", f"${deuda_total:.2f}", ft.Icons.ACCOUNT_BALANCE_WALLET, ft.colors.RED_700)
+                self.crear_tarjeta_metrica("Total Productos", str(total_productos), ft.icons.INVENTORY, ft.colors.BLUE_700),
+                self.crear_tarjeta_metrica("Productos por Agotar", str(cantidad_bajos), ft.icons.WARNING_AMBER, ft.colors.ORANGE_700),
+                self.crear_tarjeta_metrica("Total Fiados Pendientes", f"${deuda_total:.2f}", ft.icons.ACCOUNT_BALANCE_WALLET, ft.colors.RED_700)
             ])
 
             # Llenar la lista de alertas de stock bajo
@@ -82,7 +82,7 @@ class InicioView(ft.Container):
                             bgcolor=ft.colors.RED_50,
                             border_radius=8,
                             content=ft.Row([
-                                ft.Icon(ft.Icons.ERROR_OUTLINE, color=ft.colors.RED_700),
+                                ft.Icon(ft.icons.ERROR_OUTLINE, color=ft.colors.RED_700),
                                 ft.Column([
                                     ft.Text(f"{p['nombre']} (Código: {p['codigo']})", weight=ft.FontWeight.BOLD, size=14, color=ft.colors.RED_900),
                                     ft.Text(f"Descripción: {p['descripcion'] or 'Sin descripción'} | Precio: ${float(p['precio']):.2f}", size=12, color=ft.colors.GREY_700)
@@ -102,7 +102,7 @@ class InicioView(ft.Container):
                         padding=20,
                         alignment=ft.alignment.center,
                         content=ft.Column([
-                            ft.Icon(ft.Icons.CHECK_CIRCLE_OUTLINE, color=ft.colors.GREEN_700, size=40),
+                            ft.Icon(ft.icons.CHECK_CIRCLE_OUTLINE, color=ft.colors.GREEN_700, size=40),
                             ft.Text("¡Excelente! No hay productos con stock crítico en este momento.", color=ft.colors.GREEN_800, weight=ft.FontWeight.BOLD)
                         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
                     )
