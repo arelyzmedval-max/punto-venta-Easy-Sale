@@ -121,8 +121,8 @@ class InventarioView(ft.Container):
                         ft.DataCell(ft.Text(p['tipo_venta'])),
                         ft.DataCell(
                             ft.Row([
-                                ft.iconButton(ft.icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_p),
-                                ft.iconButton(ft.icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_p)
+                                ft.IconButton(ft.icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_p),
+                                ft.IconButton(ft.icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_p)
                             ])
                         )
                     ])
