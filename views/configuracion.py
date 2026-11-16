@@ -13,7 +13,8 @@ class ConfiguracionView(ft.Container):
         self.txt_mensaje = ft.TextField(label="Mensaje al final del Ticket", width=400, value="¡Gracias por su compra!")
 
         self.content = ft.Container(
-            padding=30,
+            padding=20,
+            alignment=ft.alignment.top_left,
             content=ft.Column([
                 ft.Text("Configuración General del Negocio", size=22, weight=ft.FontWeight.BOLD),
                 ft.Divider(),
@@ -24,13 +25,14 @@ class ConfiguracionView(ft.Container):
                 self.txt_mensaje,
                 ft.Container(height=10),
                 ft.ElevatedButton(
-                    content=ft.Text("Guardar Configuración"),
+                    text="Guardar Configuración",
                     icon=ft.icons.SAVE,
                     bgcolor=ft.colors.BLUE_700,
                     color=ft.colors.WHITE,
                     on_click=self.guardar_configuracion
                 )
-            ], spacing=15, scroll=ft.ScrollMode.AUTO)
+            ], tight=True, spacing=15, scroll=ft.ScrollMode.AUTO),
+            expand=True
         )
 
         self.cargar_configuracion()
