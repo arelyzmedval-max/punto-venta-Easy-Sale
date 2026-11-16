@@ -107,8 +107,8 @@ class UsuariosView(ft.Container):
                         ft.DataCell(ft.Text(u['rol'])),
                         ft.DataCell(
                             ft.Row([
-                                ft.iconButton(ft.icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_u),
-                                ft.iconButton(ft.icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_u)
+                                ft.IconButton(ft.icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_u),
+                                ft.IconButton(ft.icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_u)
                             ])
                         )
                     ])
