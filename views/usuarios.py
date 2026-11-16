@@ -28,7 +28,7 @@ class UsuariosView(ft.Container):
             expand=True
         )
 
-        btn_agregar = ft.Button(
+        btn_agregar = ft.ElevatedButton(
             content=ft.Text("Agregar Usuario"),
             icon=ft.Icons.PERSON_ADD,
             bgcolor=ft.colors.BLUE_700,
@@ -36,7 +36,7 @@ class UsuariosView(ft.Container):
             on_click=self.agregar_usuario
         )
 
-        btn_editar = ft.Button(
+        btn_editar = ft.ElevatedButton(
             content=ft.Text("Guardar Cambios"),
             icon=ft.Icons.SAVE,
             bgcolor=ft.colors.AMBER_700,
@@ -107,8 +107,8 @@ class UsuariosView(ft.Container):
                         ft.DataCell(ft.Text(u['rol'])),
                         ft.DataCell(
                             ft.Row([
-                                ft.IconButton(ft.Icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_u),
-                                ft.IconButton(ft.Icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_u)
+                                ft.iconButton(ft.Icons.EDIT, icon_color=ft.colors.AMBER_700, on_click=cargar_u),
+                                ft.iconButton(ft.Icons.DELETE, icon_color=ft.colors.RED_400, on_click=eliminar_u)
                             ])
                         )
                     ])
@@ -177,7 +177,7 @@ class UsuariosView(ft.Container):
             content=ft.Text(f"¿Deseas eliminar el usuario con ID '{id_u}'?"),
             actions=[
                 ft.TextButton("Cancelar", on_click=lambda e: self.cerrar_dialogo(dlg)),
-                ft.Button(content=ft.Text("Eliminar"), bgcolor=ft.colors.RED_700, color=ft.colors.WHITE,
+                ft.ElevatedButton(content=ft.Text("Eliminar"), bgcolor=ft.colors.RED_700, color=ft.colors.WHITE,
                           on_click=confirmar)
             ]
         )
