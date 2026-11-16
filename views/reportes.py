@@ -9,7 +9,7 @@ class ReportesView(ft.Container):
 
     def crear_interfaz(self):
         btn_generar = ft.ElevatedButton(
-            content=ft.Text("Generar Reporte"),
+            text="Generar Reporte",
             icon=ft.icons.ANALYTICS,
             bgcolor=ft.colors.GREEN_700,
             color=ft.colors.WHITE,
@@ -79,6 +79,7 @@ class ReportesView(ft.Container):
                 )
             )
         else:
-            self.page_ref.update(ft.SnackBar(ft.Text("No hay registros para generar reporte"), bgcolor=ft.colors.ORANGE_800))
+            snack = ft.SnackBar(content=ft.Text("No hay registros para generar reporte", color=ft.colors.WHITE), bgcolor=ft.colors.ORANGE_800, open=True)
+            self.page_ref.overlay.append(snack)
 
-        self.page.update()
+        self.page_ref.update()
