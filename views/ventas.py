@@ -114,7 +114,6 @@ class VentasView(ft.Container):
                         content=ft.Column([
                             ft.Text("Resumen de Venta", size=18, weight=ft.FontWeight.BOLD),
                             self.dd_metodo_pago,
-                            # Contenedor del buscador de clientes con sus sugerencias flotantes
                             ft.Column([
                                 self.txt_buscar_cliente,
                                 self.card_clientes_sugeridos
@@ -139,7 +138,6 @@ class VentasView(ft.Container):
                 ft.dropdown.Option(key=str(m['id_metodo']), text=m['metodo']) for m in metodos
             ]
 
-    # --- LÓGICA DE BÚSQUEDA DE CLIENTES EN TIEMPO REAL ---
     def filtrar_sugerencias_clientes(self, e):
         texto = self.txt_buscar_cliente.value.strip() if self.txt_buscar_cliente.value else ""
         if not texto:
@@ -162,7 +160,7 @@ class VentasView(ft.Container):
         for cli in res:
             def elegir_cliente(e, c=cli):
                 self.cliente_seleccionado_id = c['id_cliente']
-                self.txt_buscar_cliente.value = c['nombre']  # Rellena el campo con el nombre elegido
+                self.txt_buscar_cliente.value = c['nombre']
                 self.card_clientes_sugeridos.visible = False
                 self.page_ref.update()
 
@@ -180,7 +178,6 @@ class VentasView(ft.Container):
         self.card_clientes_sugeridos.visible = True
         self.page_ref.update()
 
-    # --- LÓGICA DE BÚSQUEDA DE PRODUCTOS ---
     def filtrar_sugerencias_productos(self, e):
         texto = self.txt_codigo.value.strip() if self.txt_codigo.value else ""
         if not texto:
@@ -200,9 +197,7 @@ class VentasView(ft.Container):
 
         self.lista_sugerencias.controls.clear()
         for prod in res:
-            # CONSULTA FRESCA DE STOCK AL MOMENTO DE MOSTRAR LA SUGERENCIA
-            prod_actualizado = self.db.obtener_resultados("SELECT * FROM productos WHERE codigo = %s",
-                                                          (prod['codigo'],))
+            prod_actualizado = self.db.obtener_resultados("SELECT * FROM productos WHERE codigo = %s", (prod['codigo'],))
             stock_actual = float(prod_actualizado[0]['stock']) if prod_actualizado else float(prod['stock'])
 
             def elegir_producto(e, codigo_prod=prod['codigo']):
@@ -210,7 +205,6 @@ class VentasView(ft.Container):
                 self.txt_codigo.value = ""
                 self.page_ref.update()
 
-                # Consultamos directamente de la BD el producto fresco al hacer clic
                 p_real = self.db.obtener_resultados("SELECT * FROM productos WHERE codigo = %s", (codigo_prod,))
                 if p_real:
                     self.evaluar_y_agregar(p_real[0])
@@ -237,7 +231,6 @@ class VentasView(ft.Container):
         texto = self.txt_codigo.value.strip() if self.txt_codigo.value else ""
         if not texto: return
 
-        # Consulta directa y fresca de la BD al presionar Enter
         res = self.db.obtener_resultados("SELECT * FROM productos WHERE codigo = %s OR nombre LIKE %s LIMIT 1",
                                          (texto, f"%{texto}%"))
         if res:
@@ -327,10 +320,16 @@ class VentasView(ft.Container):
                 item['cantidad'] += cantidad
                 self.actualizar_tabla_carrito()
                 return
+        
+        # AQUÍ SE GUARDA EL PRECIO DE COSTO (precio_costoi) JUNTO CON EL DE VENTA
         self.carrito.append({
-            'codigo': prod['codigo'], 'nombre': prod['nombre'],
-            'precio': float(prod['precio']), 'cantidad': cantidad,
-            'tipo_venta': prod.get('tipo_venta', 'por unidad'), 'stock': prod['stock']
+            'codigo': prod['codigo'], 
+            'nombre': prod['nombre'],
+            'precio': float(prod['precio']), 
+            'costo': float(prod.get('precio_costoi', 0.0)),
+            'cantidad': cantidad,
+            'tipo_venta': prod.get('tipo_venta', 'por unidad'), 
+            'stock': prod['stock']
         })
         self.actualizar_tabla_carrito()
 
@@ -378,7 +377,6 @@ class VentasView(ft.Container):
             self.mostrar_snack("⚠️ El carrito está vacío", ft.colors.ORANGE_800)
             return
 
-        # 1. VERIFICACIÓN OBLIGATORIA DE CAJA ABIERTA
         q_caja = "SELECT id_caja FROM caja WHERE id_usuario = %s AND estado = 'ABIERTA' LIMIT 1"
         caja_activa = self.db.obtener_resultados(q_caja, (self.usuario['id_usuario'],))
 
@@ -406,7 +404,7 @@ class VentasView(ft.Container):
         subtotal = sum(i['precio'] * i['cantidad'] for i in self.carrito)
         total = subtotal + (subtotal * (float(self.txt_impuesto.value or 0) / 100))
 
-        # 2. Registrar la venta principal
+        # Registrar la venta principal
         q_venta = "INSERT INTO ventas (id_usuario, metodo_pago_id, impuesto, total_venta) VALUES (%s, %s, %s, %s)"
         cursor = self.db.ejecutar_query(q_venta, (
             self.usuario['id_usuario'], metodo_id, float(self.txt_impuesto.value or 0), total))
@@ -414,12 +412,11 @@ class VentasView(ft.Container):
         if cursor and cursor.lastrowid:
             id_venta = cursor.lastrowid
 
-            # 3. Si es fiado, registrar en créditos
             if es_fiado:
                 q_credito = "INSERT INTO creditos (id_cliente, id_venta, total_fiado, abono, estado) VALUES (%s, %s, %s, 0.00, 'Pendiente')"
                 self.db.ejecutar_query(q_credito, (self.cliente_seleccionado_id, id_venta, total))
 
-            # 4. Guardar detalles y descontar stock correctamente
+            # Guardar detalles (incluyendo el costo unitario para poder calcular ganancias)
             for item in self.carrito:
                 sub_item = item['precio'] * item['cantidad']
                 self.db.ejecutar_query(
