@@ -35,9 +35,9 @@ class CajaView(ft.Container):
         )
 
         self.lbl_estado = ft.Text("Verificando estado de caja...", size=16, weight=ft.FontWeight.BOLD)
+        self.lbl_ganancia = ft.Text("", size=16, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_700)
         self.contenedor_acciones = ft.Column(spacing=15)
 
-        # Contenedor principal con ALINEACIÓN SUPERIOR (top_left) para que no quede abajo
         self.content = ft.Container(
             padding=20,
             alignment=ft.alignment.top_left,
@@ -45,6 +45,8 @@ class CajaView(ft.Container):
                 ft.Text("Gestión de Caja y Corte", size=22, weight=ft.FontWeight.BOLD),
                 ft.Divider(),
                 self.lbl_estado,
+                self.lbl_ganancia,
+                ft.Container(height=10),
                 self.contenedor_acciones
             ], tight=True, spacing=15, scroll=ft.ScrollMode.AUTO),
             expand=True
@@ -58,13 +60,36 @@ class CajaView(ft.Container):
 
         if caja_activa:
             caja = caja_activa[0]
-            self.lbl_estado.value = f"🟢 Caja Abierta el {caja['fecha_apertura']} con un fondo inicial de ${float(caja['fondo_inicial']):.2f}"
+            fecha_apertura = caja['fecha_apertura']
+            
+            # Consultar el total vendido y la ganancia neta desde que se abrió esta caja
+            q_ventas = """
+                SELECT SUM(v.total_venta) as total_vendido,
+                       SUM((vd.precio_unitario - p.precio_costoi) * vd.cantidad) as ganancia_neta
+                FROM ventas v
+                JOIN ventas_detalle vd ON v.id_venta = vd.id_venta
+                JOIN productos p ON vd.codigo_producto = p.codigo
+                WHERE v.id_usuario = %s AND v.fecha >= %s
+            """
+            res_stats = self.db.obtener_resultados(q_ventas, (self.usuario['id_usuario'], fecha_apertura))
+            
+            total_vendido = 0.0
+            ganancia_neta = 0.0
+            if res_stats and res_stats[0]['total_vendido']:
+                total_vendido = float(res_stats[0]['total_vendido'])
+                ganancia_neta = float(res_stats[0]['ganancia_neta'] or 0.0)
+
+            self.lbl_estado.value = f"🟢 Caja Abierta el {fecha_apertura} | Fondo Inicial: ${float(caja['fondo_inicial']):.2f} | Vendido en Turno: ${total_vendido:.2f}"
             self.lbl_estado.color = ft.colors.GREEN_700
             
+            self.lbl_ganancia.value = f"💰 Ganancia Neta (Utilidad) en este turno: ${ganancia_neta:.2f}"
+            self.lbl_ganancia.visible = True
+
             self.contenedor_acciones.controls.append(self.btn_cerrar)
         else:
             self.lbl_estado.value = "🔴 No hay caja abierta. Ingrese el fondo inicial para comenzar su turno."
             self.lbl_estado.color = ft.colors.RED_700
+            self.lbl_ganancia.visible = False
             
             self.contenedor_acciones.controls.extend([
                 self.txt_fondo_inicial,
