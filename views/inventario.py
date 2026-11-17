@@ -16,8 +16,9 @@ class InventarioView(ft.Container):
         self.txt_nombre = ft.TextField(label="Nombre", expand=True)
         self.txt_descripcion = ft.TextField(label="Descripción", expand=True)
         
-        self.txt_precio = ft.TextField(label="Precio ($)", keyboard_type=ft.KeyboardType.NUMBER, width=200)
-        self.txt_stock = ft.TextField(label="Stock Inicial", keyboard_type=ft.KeyboardType.NUMBER, width=200)
+        self.txt_costo = ft.TextField(label="Precio Costo ($)", keyboard_type=ft.KeyboardType.NUMBER, width=180)
+        self.txt_precio = ft.TextField(label="Precio Venta ($)", keyboard_type=ft.KeyboardType.NUMBER, width=180)
+        self.txt_stock = ft.TextField(label="Stock Inicial", keyboard_type=ft.KeyboardType.NUMBER, width=150)
         
         self.dd_tipo_venta = ft.Dropdown(
             label="Tipo de Venta",
@@ -26,7 +27,7 @@ class InventarioView(ft.Container):
                 ft.dropdown.Option("por unidad"),
                 ft.dropdown.Option("por kilo")
             ],
-            width=200
+            width=180
         )
 
         self.btn_guardar = ft.ElevatedButton(
@@ -50,8 +51,8 @@ class InventarioView(ft.Container):
             columns=[
                 ft.DataColumn(ft.Text("Código")),
                 ft.DataColumn(ft.Text("Nombre")),
-                ft.DataColumn(ft.Text("Descripción")),
-                ft.DataColumn(ft.Text("Precio")),
+                ft.DataColumn(ft.Text("Costo")),
+                ft.DataColumn(ft.Text("Venta")),
                 ft.DataColumn(ft.Text("Stock Actual")),
                 ft.DataColumn(ft.Text("Tipo Venta")),
                 ft.DataColumn(ft.Text("Acciones")),
@@ -66,7 +67,7 @@ class InventarioView(ft.Container):
                 ft.Text("Gestión de Inventario y Productos", size=22, weight=ft.FontWeight.BOLD),
                 ft.Divider(),
                 ft.Row([self.txt_codigo, self.txt_nombre, self.txt_descripcion]),
-                ft.Row([self.txt_precio, self.txt_stock, self.dd_tipo_venta, self.btn_guardar, self.btn_cancelar]),
+                ft.Row([self.txt_costo, self.txt_precio, self.txt_stock, self.dd_tipo_venta, self.btn_guardar, self.btn_cancelar]),
                 ft.Divider(),
                 ft.Text("Productos Registrados", size=18, weight=ft.FontWeight.BOLD),
                 ft.Container(
@@ -87,9 +88,10 @@ class InventarioView(ft.Container):
                 def editar(e, p=prod):
                     self.producto_editando_codigo = p['codigo']
                     self.txt_codigo.value = str(p['codigo'])
-                    self.txt_codigo.disabled = True  # No se edita la PK
+                    self.txt_codigo.disabled = True
                     self.txt_nombre.value = p['nombre']
                     self.txt_descripcion.value = p['descripcion'] or ""
+                    self.txt_costo.value = str(p.get('precio_costo', 0.0))
                     self.txt_precio.value = str(p['precio'])
                     self.txt_stock.value = str(p['stock'])
                     self.dd_tipo_venta.value = p.get('tipo_venta', 'por unidad')
@@ -108,7 +110,7 @@ class InventarioView(ft.Container):
                     ft.DataRow(cells=[
                         ft.DataCell(ft.Text(str(codigo))),
                         ft.DataCell(ft.Text(prod['nombre'])),
-                        ft.DataCell(ft.Text(prod['descripcion'] or "")),
+                        ft.DataCell(ft.Text(f"${float(prod.get('precio_costo', 0.0)):.2f}")),
                         ft.DataCell(ft.Text(f"${float(prod['precio']):.2f}")),
                         ft.DataCell(ft.Text(stock_str)),
                         ft.DataCell(ft.Text(prod.get('tipo_venta', 'por unidad'))),
@@ -126,10 +128,11 @@ class InventarioView(ft.Container):
         descripcion = self.txt_descripcion.value.strip() if self.txt_descripcion.value else ""
         
         try:
+            costo = float(self.txt_costo.value.replace(",", ".")) if self.txt_costo.value else 0.0
             precio = float(self.txt_precio.value.replace(",", ".")) if self.txt_precio.value else 0.0
             stock = float(self.txt_stock.value.replace(",", ".")) if self.txt_stock.value else 0.0
         except ValueError:
-            self.mostrar_snack("⚠️ Precio y stock deben ser numéricos", ft.colors.RED_700)
+            self.mostrar_snack("⚠️ Costo, precio y stock deben ser numéricos", ft.colors.RED_700)
             return
 
         if not codigo or not nombre:
@@ -139,21 +142,19 @@ class InventarioView(ft.Container):
         tipo_v = self.dd_tipo_venta.value
 
         if self.producto_editando_codigo:
-            # Actualizar
             self.db.ejecutar_query(
-                "UPDATE productos SET nombre = %s, descripcion = %s, precio = %s, stock = %s, tipo_venta = %s WHERE codigo = %s",
-                (nombre, descripcion, precio, stock, tipo_v, self.producto_editando_codigo)
+                "UPDATE productos SET nombre = %s, descripcion = %s, precio_costo = %s, precio = %s, stock = %s, tipo_venta = %s WHERE codigo = %s",
+                (nombre, descripcion, costo, precio, stock, tipo_v, self.producto_editando_codigo)
             )
             self.mostrar_snack("✅ Producto actualizado con éxito", ft.colors.GREEN_700)
         else:
-            # Insertar nuevo
             existe = self.db.obtener_resultados("SELECT * FROM productos WHERE codigo = %s", (codigo,))
             if existe:
                 self.mostrar_snack("⚠️ Ya existe un producto con ese código", ft.colors.RED_700)
                 return
             self.db.ejecutar_query(
-                "INSERT INTO productos (codigo, nombre, descripcion, precio, stock, tipo_venta) VALUES (%s, %s, %s, %s, %s, %s)",
-                (codigo, nombre, descripcion, precio, stock, tipo_v)
+                "INSERT INTO productos (codigo, nombre, descripcion, precio_costo, precio, stock, tipo_venta) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                (codigo, nombre, descripcion, costo, precio, stock, tipo_v)
             )
             self.mostrar_snack("✅ Producto guardado con éxito", ft.colors.GREEN_700)
 
@@ -166,6 +167,7 @@ class InventarioView(ft.Container):
         self.txt_codigo.disabled = False
         self.txt_nombre.value = ""
         self.txt_descripcion.value = ""
+        self.txt_costo.value = ""
         self.txt_precio.value = ""
         self.txt_stock.value = ""
         self.dd_tipo_venta.value = "por unidad"
