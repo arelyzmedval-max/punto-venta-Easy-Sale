@@ -91,7 +91,7 @@ class InventarioView(ft.Container):
                     self.txt_codigo.disabled = True
                     self.txt_nombre.value = p['nombre']
                     self.txt_descripcion.value = p['descripcion'] or ""
-                    self.txt_costo.value = str(p.get('precio_costo', 0.0))
+                    self.txt_costo.value = str(p.get('precio_costoi', 0.0))
                     self.txt_precio.value = str(p['precio'])
                     self.txt_stock.value = str(p['stock'])
                     self.dd_tipo_venta.value = p.get('tipo_venta', 'por unidad')
@@ -110,7 +110,7 @@ class InventarioView(ft.Container):
                     ft.DataRow(cells=[
                         ft.DataCell(ft.Text(str(codigo))),
                         ft.DataCell(ft.Text(prod['nombre'])),
-                        ft.DataCell(ft.Text(f"${float(prod.get('precio_costo', 0.0)):.2f}")),
+                        ft.DataCell(ft.Text(f"${float(prod.get('precio_costoi', 0.0)):.2f}")),
                         ft.DataCell(ft.Text(f"${float(prod['precio']):.2f}")),
                         ft.DataCell(ft.Text(stock_str)),
                         ft.DataCell(ft.Text(prod.get('tipo_venta', 'por unidad'))),
@@ -143,7 +143,7 @@ class InventarioView(ft.Container):
 
         if self.producto_editando_codigo:
             self.db.ejecutar_query(
-                "UPDATE productos SET nombre = %s, descripcion = %s, precio_costo = %s, precio = %s, stock = %s, tipo_venta = %s WHERE codigo = %s",
+                "UPDATE productos SET nombre = %s, descripcion = %s, precio_costoi = %s, precio = %s, stock = %s, tipo_venta = %s WHERE codigo = %s",
                 (nombre, descripcion, costo, precio, stock, tipo_v, self.producto_editando_codigo)
             )
             self.mostrar_snack("✅ Producto actualizado con éxito", ft.colors.GREEN_700)
@@ -153,7 +153,7 @@ class InventarioView(ft.Container):
                 self.mostrar_snack("⚠️ Ya existe un producto con ese código", ft.colors.RED_700)
                 return
             self.db.ejecutar_query(
-                "INSERT INTO productos (codigo, nombre, descripcion, precio_costo, precio, stock, tipo_venta) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                "INSERT INTO productos (codigo, nombre, descripcion, precio_costoi, precio, stock, tipo_venta) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                 (codigo, nombre, descripcion, costo, precio, stock, tipo_v)
             )
             self.mostrar_snack("✅ Producto guardado con éxito", ft.colors.GREEN_700)
