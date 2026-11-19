@@ -1,4 +1,4 @@
-
+import os
 import flet as ft
 from views.inicio import InicioView
 from views.ventas import VentasView
@@ -7,8 +7,8 @@ from views.historial import HistorialView
 from views.reportes import ReportesView
 from views.usuarios import UsuariosView
 from views.caja import CajaView
-from views.configuracion import ConfiguracionView
 from views.clientes import ClientesView
+from views.configuracion import ConfiguracionView
 from views.login import LoginView
 from database import Database
 
@@ -19,37 +19,54 @@ def main(page: ft.Page):
 
     db = Database()
 
-    # Función que se ejecuta cuando el login es exitoso
     def mostrar_dashboard(usuario_actual):
+        page.overlay.clear()
         page.clean()
+
+        views_cache = {}
 
         body_container = ft.Container(
             content=None,
             expand=True
         )
 
+        def obtener_o_crear_vista(index):
+            if index in views_cache:
+                return views_cache[index]
+
+            if index == 0:
+                vista = InicioView(page, db, usuario_actual)
+            elif index == 1:
+                vista = VentasView(page, db, usuario_actual)
+            elif index == 2:
+                vista = InventarioView(page, db)
+            elif index == 3:
+                vista = HistorialView(page, db)
+            elif index == 4:
+                vista = ReportesView(page, db)
+            elif index == 5:
+                vista = UsuariosView(page, db)
+            elif index == 6:
+                vista = CajaView(page, db, usuario_actual)
+            elif index == 7:
+                vista = ClientesView(page, db, usuario_actual)
+            elif index == 8:
+                vista = ConfiguracionView(page, db)
+            else:
+                vista = InicioView(page, db, usuario_actual)
+
+            views_cache[index] = vista
+            return vista
+
         def cambiar_vista(e):
             selected_index = e.control.selected_index
-            body_container.content = views_list[selected_index]
+            body_container.content = obtener_o_crear_vista(selected_index)
             body_container.update()
 
         def cerrar_sesion(e):
+            views_cache.clear()
             mostrar_login()
 
-        # Lista de vistas del sistema
-        views_list = [
-            InicioView(page, db, usuario_actual),
-            VentasView(page, db, usuario_actual),
-            InventarioView(page, db),
-            HistorialView(page, db),
-            ReportesView(page, db),
-            UsuariosView(page, db),
-            CajaView(page, db, usuario_actual),
-            ClientesView(page, db, usuario_actual),
-            ConfiguracionView(page, db)
-        ]
-
-        # Encabezado principal
         header = ft.Container(
             bgcolor=ft.colors.BLUE_900,
             padding=10,
@@ -81,7 +98,6 @@ def main(page: ft.Page):
             )
         )
 
-        # Menú lateral
         nav_rail = ft.NavigationRail(
             selected_index=0,
             label_type=ft.NavigationRailLabelType.ALL,
@@ -89,49 +105,20 @@ def main(page: ft.Page):
             min_extended_width=180,
             on_change=cambiar_vista,
             destinations=[
-                ft.NavigationRailDestination(
-                    icon=ft.icons.HOME,
-                    label="Inicio"
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.icons.POINT_OF_SALE,
-                    label="Ventas"
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.icons.INVENTORY,
-                    label="Inventario"
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.icons.HISTORY,
-                    label="Historial"
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.icons.BAR_CHART,
-                    label="Reportes"
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.icons.PEOPLE,
-                    label="Usuarios"
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.icons.POINT_OF_SALE_OUTLINED,
-                    label="Caja"
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.icons.PERSON_PIN,
-                    label="Clientes"
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.icons.SETTINGS,
-                    label="Configuración"
-                )
+                ft.NavigationRailDestination(icon=ft.icons.HOME, label="Inicio"),
+                ft.NavigationRailDestination(icon=ft.icons.POINT_OF_SALE, label="Ventas"),
+                ft.NavigationRailDestination(icon=ft.icons.INVENTORY, label="Inventario"),
+                ft.NavigationRailDestination(icon=ft.icons.HISTORY, label="Historial"),
+                ft.NavigationRailDestination(icon=ft.icons.BAR_CHART, label="Reportes"),
+                ft.NavigationRailDestination(icon=ft.icons.PEOPLE, label="Usuarios"),
+                ft.NavigationRailDestination(icon=ft.icons.POINT_OF_SALE_OUTLINED, label="Caja"),
+                ft.NavigationRailDestination(icon=ft.icons.PERSON_PIN, label="Clientes"),
+                ft.NavigationRailDestination(icon=ft.icons.SETTINGS, label="Configuración"),
             ]
         )
 
-        # Mostrar inicialmente la pantalla de inicio
-        body_container.content = views_list[0]
+        body_container.content = obtener_o_crear_vista(0)
 
-        # Estructura principal del Dashboard
         main_layout = ft.Container(
             expand=True,
             bgcolor=ft.colors.WHITE,
@@ -154,8 +141,8 @@ def main(page: ft.Page):
         page.add(main_layout)
         page.update()
 
-    # Función para mostrar el inicio de sesión
     def mostrar_login():
+        page.overlay.clear()
         page.clean()
 
         login_view = LoginView(
@@ -167,17 +154,15 @@ def main(page: ft.Page):
         page.add(login_view)
         page.update()
 
-    # Iniciar mostrando el login
     mostrar_login()
 
 
 if __name__ == "__main__":
-    import os
-
     port = int(os.environ.get("PORT", 8000))
 
     ft.app(
         target=main,
+        view=ft.AppView.WEB_BROWSER,
         port=port,
         host="0.0.0.0"
     )
