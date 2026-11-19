@@ -2,8 +2,7 @@ import subprocess
 
 
 class ImpresoraTexsonMac:
-    def __init__(self, nombre_impresora: str | None = None, ancho: int = 32):
-        # Si nombre_impresora es None, usará la impresora predeterminada de tu Mac
+    def __init__(self, nombre_impresora: str | None = "EML_Printer", ancho: int = 32):
         self.nombre_impresora = nombre_impresora
         self.ancho = ancho
 
@@ -33,27 +32,25 @@ class ImpresoraTexsonMac:
         ]
         return "\n".join(lineas)
 
-    def imprimir_texto(self, texto: str):
-        comando = ["lp"]
-        if self.nombre_impresora:
-            comando.extend(["-d", self.nombre_impresora])
+    def construir_ticket_venta(
+        self,
+        folio: str,
+        fecha: str,
+        items: list[dict],
+        total: float,
+        pago: float = 0.0,
+    ) -> str:
+        sep = "-" * self.ancho
+        lineas = [
+            self._centrar("MI NEGOCIO POS"),
+            self._centrar("TICKET DE VENTA"),
+            sep,
+            f"Folio: {folio}"[: self.ancho],
+            f"Fecha: {fecha}"[: self.ancho],
+            sep,
+        ]
 
-        # Codificamos en latin-1 / cp850 para evitar errores con acentos o $
-        datos = texto.encode("latin-1", errors="replace")
-
-        proceso = subprocess.run(
-            comando,
-            input=datos,
-            capture_output=True,
-        )
-        if proceso.returncode != 0:
-            error_msg = proceso.stderr.decode("utf-8", errors="replace")
-            raise RuntimeError(f"Error al imprimir en Mac: {error_msg}")
-
-
-if __name__ == "__main__":
-    # Cambia "None" por el nombre de tu impresora si quieres ser específica, ej: "POS-58"
-    impresora = ImpresoraTexsonMac(nombre_impresora=None, ancho=32)
-    ticket = impresora.construir_ticket_prueba()
-    impresora.imprimir_texto(ticket)
-    print("Listo: se envió el ticket de prueba.")
+        for item in items:
+            desc = f"{item.get('cantidad', 1)}x {item.get('nombre', '')}"
+            subtotal = float(item.get("subtotal", 0.0))
+            lineas.append(self
